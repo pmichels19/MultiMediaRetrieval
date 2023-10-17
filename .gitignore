@@ -1,2 +1,6 @@
 ModelQueryTool/Shapes
+ModelQueryTool/.idea
+ModelQueryTool/figures
+ModelQueryTool/target
 *.csv
+*.iml
