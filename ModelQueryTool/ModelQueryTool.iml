@@ -11,11 +11,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="gluegen-rt" level="project" />
     <orderEntry type="library" name="Jama-1.0.3" level="project" />
     <orderEntry type="library" name="commons-math3-3.6.1" level="project" />
     <orderEntry type="library" name="jackson-annotations-2.15.2" level="project" />
     <orderEntry type="library" name="jackson-core-2.15.2-sources" level="project" />
     <orderEntry type="library" name="jackson-databind-2.15.2" level="project" />
+    <orderEntry type="library" name="gluegen-rt" level="project" />
   </component>
 </module>

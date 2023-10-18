@@ -1,18 +1,16 @@
 package DataProcessing;
 
 import Basics.Mesh;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public class FeaturePipelineContext {
-    private static final int BIN_COUNT = 20;
-
     private final Map<String, Float> elementaryMap;
 
     private final Map<String, float[]> globalMap;
@@ -24,6 +22,41 @@ public class FeaturePipelineContext {
 
         elementaryMap = new HashMap<>();
         globalMap = new HashMap<>();
+    }
+
+    public static FeaturePipelineContext fromJson(String filePath) {
+        if (!filePath.endsWith(".json")) throw new IllegalArgumentException("Please provide a .json file.");
+
+        File json = new File(filePath);
+        ObjectMapper mapper = new ObjectMapper();
+
+        JsonNode root;
+        try {
+            root = mapper.readTree(json);
+        } catch (IOException e) {
+            System.err.println("Failed to read file " + filePath + ":");
+            e.printStackTrace();
+            return null;
+        }
+
+        FeaturePipelineContext context = new FeaturePipelineContext(null);
+        Iterator<Map.Entry<String, JsonNode>> iterator = root.fields();
+        while (iterator.hasNext()) {
+            Map.Entry<String, JsonNode> field = iterator.next();
+            String key = field.getKey();
+            JsonNode value = field.getValue();
+
+            if (value.isArray()) {
+                int size = value.size();
+                float[] hist = new float[size];
+                for (int i = 0; i < size; i++) hist[i] = value.get(i).floatValue();
+                context.putData(key, hist);
+            } else if (value.isNumber()) {
+                context.putData(key, value.floatValue());
+            }
+        }
+
+        return context;
     }
 
     public ObjectNode toJson() {
@@ -70,7 +103,7 @@ public class FeaturePipelineContext {
     }
 
     public void putData(String key, float[] values) {
-        globalMap.put(key, toHistogram(values));
+        globalMap.put(key, values);
     }
 
     public float[] getGlobal(String key) {
@@ -88,24 +121,5 @@ public class FeaturePipelineContext {
 
     public void unloadMesh() {
         mesh = null;
-    }
-
-    private float[] toHistogram(float[] values) {
-        float bmin = Float.MAX_VALUE;
-        float bmax = -Float.MAX_VALUE;
-        for (float v : values) {
-            if (v < bmin) bmin = v;
-            if (v > bmax) bmax = v;
-        }
-
-        float step = ((float) BIN_COUNT) / (bmax - bmin);
-        float[] bins = new float[BIN_COUNT];
-        for (float value : values) {
-            int binIdx = Math.min(BIN_COUNT - 1, (int) ((value - bmin) * step));
-            bins[binIdx]++;
-        }
-
-        for (int i = 0; i < BIN_COUNT; i++) bins[i] /= (float) values.length;
-        return bins;
     }
 }

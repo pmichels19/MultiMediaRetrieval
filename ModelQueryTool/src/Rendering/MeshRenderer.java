@@ -4,7 +4,6 @@ import Basics.Mesh;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.GLBuffers;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
