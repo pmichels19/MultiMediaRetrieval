@@ -17,6 +17,10 @@ public class FeaturePipelineContext {
 
     private Mesh mesh;
 
+    public FeaturePipelineContext() {
+        this(null);
+    }
+
     public FeaturePipelineContext(Mesh mesh) {
         this.mesh = mesh;
 
@@ -39,7 +43,7 @@ public class FeaturePipelineContext {
             return null;
         }
 
-        FeaturePipelineContext context = new FeaturePipelineContext(null);
+        FeaturePipelineContext context = new FeaturePipelineContext();
         Iterator<Map.Entry<String, JsonNode>> iterator = root.fields();
         while (iterator.hasNext()) {
             Map.Entry<String, JsonNode> field = iterator.next();

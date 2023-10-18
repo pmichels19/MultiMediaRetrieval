@@ -39,6 +39,6 @@ public class ObjReader implements Reader {
             }
         }
 
-        return new ReadResult(fileName.substring(fileName.lastIndexOf("/") + 1), faces.toArray(new int[0][]), points.toArray(new Vec3f[0]));
+        return new ReadResult(fileName, faces.toArray(new int[0][]), points.toArray(new Vec3f[0]));
     }
 }

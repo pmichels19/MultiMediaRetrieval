@@ -107,6 +107,6 @@ public class Stitcher {
         }
 
 //        System.out.println("Stitched " + boundaries.size() + " holes. Added " + boundaries.size() + " vertices and " + numNewFaces + " faces.");
-        return new Mesh(newVertices, newFaces, readResult.getName());
+        return new Mesh(newVertices, newFaces, readResult.getFilePath());
     }
 }

@@ -17,16 +17,16 @@ public class Mesh {
     private final float[] vertexNormalBuffer;
     private Mesh convexHull;
     private Float volume;
-    private final String name;
+    private final String filePath;
 
     public Mesh(ReadResult readResult) {
-        this(readResult.getVertices(), readResult.getFaces(), readResult.getName());
+        this(readResult.getVertices(), readResult.getFaces(), readResult.getFilePath());
     }
 
-    public Mesh(Vec3f[] vertices, int[][] faces, String name) {
+    public Mesh(Vec3f[] vertices, int[][] faces, String filePath) {
         this.vertices = vertices;
         this.faces = faces;
-        this.name = name;
+        this.filePath = filePath;
 
         // Buffer building
         vertexBuffer = new float[3 * vertices.length];
@@ -72,8 +72,12 @@ public class Mesh {
         return faces;
     }
 
+    public String getFilePath() {
+        return filePath;
+    }
+
     public String getName() {
-        return name;
+        return filePath.substring(filePath.lastIndexOf("/") + 1);
     }
 
     public float[] getVertexBuffer() {

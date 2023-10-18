@@ -58,6 +58,6 @@ public class OffReader implements Reader {
             }
         }
 
-        return new ReadResult(fileName.substring(fileName.lastIndexOf("/") + 1), faces, points);
+        return new ReadResult(fileName, faces, points);
     }
 }

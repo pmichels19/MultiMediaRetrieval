@@ -1,6 +1,7 @@
 package Rendering;
 
 import Basics.Mesh;
+import Querying.FileQueryResult;
 import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.Vec3f;
@@ -23,6 +24,7 @@ public class Controls implements KeyListener {
     private int meshIdx;
     private boolean meshChanged;
     private final List<Mesh> meshes;
+    private final List<Float> meshDistances;
     private boolean takeScreenshot;
     private boolean screenshotPressed;
 
@@ -48,6 +50,7 @@ public class Controls implements KeyListener {
 
         meshIdx = 0;
         meshes = new ArrayList<>();
+        meshDistances = new ArrayList<>();
         meshChanged = true;
 
         takeScreenshot = false;
@@ -283,6 +286,18 @@ public class Controls implements KeyListener {
         return meshes.get(meshIdx);
     }
 
+    int getMeshIdx() {
+        return meshIdx + 1;
+    }
+
+    int getMeshCount() {
+        return meshes.size();
+    }
+
+    String getDistance() {
+        return String.format("%.4f", meshDistances.get(meshIdx));
+    }
+
     boolean meshChanged() {
         return meshChanged;
     }
@@ -321,5 +336,15 @@ public class Controls implements KeyListener {
 
     void addMeshes(Collection<Mesh> meshCollection) {
         meshes.addAll(meshCollection);
+    }
+
+    void addQueryResult(FileQueryResult result) {
+        List<Mesh> resultMeshes = result.getMeshes();
+        List<Float> resultDistances = result.getDistances();
+        if (resultMeshes.size() != resultDistances.size()) throw new IllegalStateException("Mismatch between distances and meshes.");
+        meshes.clear();
+        meshDistances.clear();
+        meshes.addAll(result.getMeshes());
+        meshDistances.addAll(result.getDistances());
     }
 }

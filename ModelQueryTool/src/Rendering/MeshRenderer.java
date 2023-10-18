@@ -1,6 +1,7 @@
 package Rendering;
 
 import Basics.Mesh;
+import Querying.FileQueryResult;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -106,6 +107,10 @@ public class MeshRenderer extends JFrame implements GLEventListener {
         controls.addMeshes(meshes);
     }
 
+    public void addQueryResults(FileQueryResult result) {
+        controls.addQueryResult(result);
+    }
+
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL4 gl4 = glAutoDrawable.getGL().getGL4();
@@ -191,7 +196,7 @@ public class MeshRenderer extends JFrame implements GLEventListener {
         vertices = mesh.getVertexBuffer();
         vertexNormals = mesh.getVertexNormalBuffer();
 
-        this.setTitle("ModelQueryTool Renderer - " + mesh.getName());
+        this.setTitle("ModelQueryTool Renderer - " + mesh.getName() + " (" + controls.getMeshIdx() + "/" + controls.getMeshCount() + ")\t\tdistance: " + controls.getDistance());
     }
 
     private void useShader(GL4 gl4, String type) {

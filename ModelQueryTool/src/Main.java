@@ -4,6 +4,8 @@ import Preprocessing.Analysis.Analysis;
 import Preprocessing.Analysis.AreaAnalysis;
 import Preprocessing.Analysis.GeneralAnalysis;
 import Preprocessing.PreperationPipeline;
+import Querying.FileQueryProcessor;
+import Querying.FileQueryResult;
 import Readers.Reader;
 import Rendering.MeshRenderer;
 
@@ -26,32 +28,9 @@ public class Main {
         // Calculates all features over the entire database and performs standardization and normalization
 //        describeDatabase();
         MeshRenderer renderer = MeshRenderer.getInstance();
-        PreperationPipeline preperationPipeline = PreperationPipeline.getInstance();
 
-        try {
-            Mesh f18 = preperationPipeline.getCleanMesh("Shapes/ShapeDatabase_INFOMR-master/Jet/m1216.obj");
-            renderer.add(f18);
-            Mesh f16 = preperationPipeline.getCleanMesh("Shapes/ShapeDatabase_INFOMR-master/Jet/m1175.obj");
-            renderer.add(f16);
-
-//            Mesh fish1 = preperationPipeline.getCleanMesh("Shapes/ShapeDatabase_INFOMR-master/Fish/D00012.obj");
-//            renderer.add(fish1);
-//            Mesh fish2 = preperationPipeline.getCleanMesh("Shapes/ShapeDatabase_INFOMR-master/Fish/D00950.obj");
-//            renderer.add(fish2);
-
-//            Mesh bust1 = preperationPipeline.getCleanMesh("Shapes/Labeled_PSB/Mech/321.off");
-//            renderer.add(bust1);
-//            Mesh bust2 = preperationPipeline.getCleanMesh("Shapes/Labeled_PSB/Mech/340.off");
-//            renderer.add(bust2);
-//
-//            Mesh hand1 = preperationPipeline.getCleanMesh("Shapes/Labeled_PSB/Hand/181.off");
-//            renderer.add(hand1);
-//            Mesh hand2 = preperationPipeline.getCleanMesh("Shapes/Labeled_PSB/Hand/200.off");
-//            renderer.add(hand2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        FileQueryProcessor processor = FileQueryProcessor.getInstance();
+        renderer.addQueryResults(processor.queryFile("Shapes/ShapeDatabase_INFOMR-master/Jet/m1216_clean.obj"));
         renderer.startRenderer();
     }
 

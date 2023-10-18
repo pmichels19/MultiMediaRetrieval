@@ -58,6 +58,6 @@ public class PlyReader implements Reader {
 
         assert faces != null;
         assert points != null;
-        return new ReadResult(fileName.substring(fileName.lastIndexOf("/") + 1), faces, points);
+        return new ReadResult(fileName, faces, points);
     }
 }

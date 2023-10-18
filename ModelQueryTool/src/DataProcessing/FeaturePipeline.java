@@ -68,31 +68,37 @@ public class FeaturePipeline {
 
         // Clear existing json files
         Arrays.stream(jsonFiles).forEach(this::clearExistingJson);
+        System.out.println("########## Cleared database json files ##########");
+
         // Calculate the descriptors for all meshes and report any failing ones
         StringBuilder builder = new StringBuilder();
         FeaturePipelineContext[] contexts = calculateDatabaseDescriptors(meshFiles, builder);
         if (!builder.isEmpty()) reportFailedMeshes(builder);
-        // Normalize the elementary data
+        System.out.println("########## Calculated database descriptors ##########");
+
+        // Normalize the elementary data and get standardized weights of the global features
         FeatureStatistics statistics = new FeatureStatistics(contexts);
+        System.out.println("########## Extracted database mins, maxs, means and standard deviations ##########");
+
         for (FeaturePipelineContext context : contexts) {
             if (context == null) continue;
             context.normalizeElementaries(statistics);
         }
-        // Get standardized weights of the global features
-        calculateDatabaseWeights(contexts);
-        // Save the contexts to their json files
+
+        // Save the contexts to their json files and save the statistics
         saveContexts(contexts, jsonFiles);
+        statistics.saveToJson();
+        System.out.println("########## Saved database json files and statistics ##########");
     }
 
     private FeaturePipelineContext[] calculateDatabaseDescriptors(String[] meshFiles, StringBuilder erroredFiles) {
         FeaturePipelineContext[] contexts = new FeaturePipelineContext[meshFiles.length];
         for (int i = 0; i < meshFiles.length; i++) {
             String meshFile = meshFiles[i];
-            System.out.println("===== " + meshFile + " =====");
 
             try {
-                Mesh mesh = stitcher.stitchHoles(Reader.read(meshFile));
-                contexts[i] = calculateMeshDescriptors(mesh);
+                contexts[i] = calculateMeshDescriptors(meshFile);
+                contexts[i].unloadMesh();
             } catch (Exception e) {
                 erroredFiles.append(meshFile).append("\n");
                 e.printStackTrace();
@@ -102,15 +108,16 @@ public class FeaturePipeline {
         return contexts;
     }
 
-    private FeaturePipelineContext calculateMeshDescriptors(Mesh mesh) {
+    public FeaturePipelineContext calculateMeshDescriptors(String meshFile) throws IOException {
+        Mesh mesh = stitcher.stitchHoles(Reader.read(meshFile));
         FeaturePipelineContext context = new FeaturePipelineContext(mesh);
+        System.out.println("===== " + meshFile + " =====");
         for (int i = 0; i < descriptors.length; i++) {
             Descriptor descriptor = descriptors[i];
             descriptor.process(context);
             System.out.println((i + 1) + " - " + descriptor.getKey());
         }
 
-        context.unloadMesh();
         return context;
     }
 
@@ -140,77 +147,6 @@ public class FeaturePipeline {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    private void calculateDatabaseWeights(FeaturePipelineContext[] contexts) {
-        List<String> globalKeys = new ArrayList<>();
-        for (Descriptor descriptor : descriptors) {
-            if (descriptor instanceof GlobalDescriptor) globalKeys.add(descriptor.getKey());
-        }
-
-        int k = globalKeys.size();
-        int l = Helpers.DISTANCE_FUNCTIONS.length;
-        float[][] means = new float[k][l];
-        float[][] squareSums = new float[k][l];
-
-        float n = 0;
-        for (int i = 0; i < contexts.length; i++) {
-            FeaturePipelineContext context1 = contexts[i];
-            if (context1 == null) continue;
-
-            for (int j = i + 1; j < contexts.length; j++) {
-                FeaturePipelineContext context2 = contexts[j];
-                if (context2 == null) continue;
-
-                for (int dkey = 0; dkey < globalKeys.size(); dkey++) {
-                    String key = globalKeys.get(dkey);
-
-                    for (int df = 0; df < l; df++) {
-                        float[] v1 = context1.getGlobal(key);
-                        float[] v2 = context2.getGlobal(key);
-                        float distance = Helpers.getDistance(Helpers.DISTANCE_FUNCTIONS[df], v1, v2);
-
-                        n += 1;
-                        float delta = distance - means[dkey][df];
-                        means[dkey][df] += delta / n;
-                        squareSums[dkey][df] += delta * delta;
-                    }
-                }
-            }
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode root = mapper.createObjectNode();
-        for (int dkey = 0; dkey < globalKeys.size(); dkey++) {
-            String key = globalKeys.get(dkey);
-            ObjectNode keyNode = mapper.createObjectNode();
-
-            for (int df = 0; df < l; df++) {
-                float stdev = (float) Math.sqrt(squareSums[dkey][df] / (n - 1.0f));
-
-                String function = Helpers.DISTANCE_FUNCTIONS[df];
-
-                ObjectNode types = mapper.createObjectNode();
-                types.put("mean", means[dkey][df]);
-                types.put("stdev", stdev);
-
-                keyNode.set(function, types);
-            }
-
-            root.set(key, keyNode);
-        }
-
-        try {
-            String weightsFile = "src\\DataProcessing\\weights.json";
-            File json = new File(weightsFile);
-
-            if (!json.createNewFile()) throw new IOException("Failed to create file for " + weightsFile);
-
-            ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-            writer.writeValue(json, root);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

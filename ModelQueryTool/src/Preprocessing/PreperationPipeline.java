@@ -75,7 +75,7 @@ public class PreperationPipeline {
     public Mesh getCleanMesh(String filePath) throws IOException {
         ReadResult data = Reader.read(filePath);
         PreperationPipelineContext result = runTasks(data);
-        return new Mesh(result.getVertices(), result.getFaces(), data.getName());
+        return new Mesh(result.getVertices(), result.getFaces(), data.getFilePath());
     }
 
     private PreperationPipelineContext runTasks(ReadResult data) {
