@@ -3,5 +3,6 @@ ModelQueryTool/.idea
 ModelQueryTool/figures
 ModelQueryTool/target
 ModelQueryTool/ModelQueryTool.iml
+DataPlots/shared
 libraries
 *.csv
