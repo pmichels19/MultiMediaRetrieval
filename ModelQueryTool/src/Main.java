@@ -27,8 +27,9 @@ public class Main {
 //        analyseMeshes();
         // Calculates all features over the entire database and performs standardization and normalization
 //        describeDatabase();
-        MeshRenderer renderer = MeshRenderer.getInstance();
 
+        // Make a query and render the results
+        MeshRenderer renderer = MeshRenderer.getInstance();
         FileQueryProcessor processor = FileQueryProcessor.getInstance();
         renderer.addQueryResults(processor.queryFile("Shapes/ShapeDatabase_INFOMR-master/Jet/m1216_clean.obj"));
         renderer.startRenderer();
@@ -44,8 +45,9 @@ public class Main {
         areaAnalysis.clearCSV();
 
         try {
-            processShapeDB("Labeled_PSB");
-            processShapeDB("ShapeDatabase_INFOMR-master");
+            for (File db : Objects.requireNonNull(new File("Shapes").listFiles())) {
+                if (db.isDirectory()) processShapeDB(db.getName());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -20,18 +20,15 @@ public class Helpers {
     public static float getDistance(String function, float[] v1, float[] v2) {
         if (v1.length != v2.length) throw new IllegalArgumentException("Array length mismatch: " + v1.length + " != " + v2.length);
 
+        float distance;
         switch (function) {
-            case DISTANCE_EUCLIDEAN -> {
-                return getEuclidean(v1, v2);
-            }
-            case DISTANCE_COSINE -> {
-                return getCosine(v1,v2);
-            }
-            case DISTANCE_EMD -> {
-                return getEarthMovers(v1, v2);
-            }
+            case DISTANCE_EUCLIDEAN -> distance = getEuclidean(v1, v2);
+            case DISTANCE_COSINE -> distance = getCosine(v1,v2);
+            case DISTANCE_EMD -> distance = getEarthMovers(v1, v2);
             default -> throw new IllegalArgumentException("Distance function " + function + " does not exist.");
         }
+
+        return distance;
     }
 
     private static float getEuclidean(float[] v1, float[] v2) {

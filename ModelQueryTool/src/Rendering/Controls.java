@@ -331,10 +331,12 @@ public class Controls implements KeyListener {
     }
 
     void addMesh(Mesh mesh) {
+        if (meshDistances.size() > 0) return;
         meshes.add(mesh);
     }
 
     void addMeshes(Collection<Mesh> meshCollection) {
+        if (meshDistances.size() > 0) return;
         meshes.addAll(meshCollection);
     }
 
