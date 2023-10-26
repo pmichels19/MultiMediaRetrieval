@@ -41,27 +41,18 @@ public class D4Descriptor extends GlobalDescriptor {
                         c = vertices[v2];
                         d = vertices[v3];
 
-                        float v = 0.0f;
-                        v += triangleToVolume(a, b, c);
-                        v += triangleToVolume(a, b, d);
-                        v += triangleToVolume(a, c, d);
-                        v += triangleToVolume(b, c, d);
-                        result[idx] = (float) Math.cbrt(v * (1.0f / 6.0f));
+                        Vec3f ad = a.minus(d);
+                        Vec3f bd = b.minus(d);
+                        Vec3f cd = c.minus(d);
+                        Vec3f bdxcd = (new Vec3f()).cross(bd, cd);
+                        result[idx] = (1.0f / 6.0f) * (ad.dot(bdxcd));
                         idx++;
                     }
                 }
             }
         }
 
-        return result;
-    }
-
-    private float triangleToVolume(Vec3f a, Vec3f b, Vec3f c) {
-        Vec3f ab = b.minus(a);
-        Vec3f ac = c.minus(a);
-        Vec3f n = new Vec3f().cross(ab, ac);
-
-        return Math.abs(a.dot(n));
+        return toHistogram(result);
     }
 
     @Override

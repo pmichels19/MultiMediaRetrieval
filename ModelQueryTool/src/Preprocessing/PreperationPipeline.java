@@ -20,12 +20,12 @@ public class PreperationPipeline {
     private static final String ERROR_FILE = "prepare_errored_objects.txt";
 
     private static final PreparationTask[] tasks = new PreparationTask[] {
-            new RemoveNonManifoldFacesTask(),
             new CleaningTask(),
             new BarycenterToOriginTask(),
             new AlignPCATask(),
             new FlippingTask(),
             new ScaleToUnitCubeTask(),
+            new RemoveNonManifoldFacesTask(),
             new OrientFaceNormalsTask(),
     };
 
@@ -80,9 +80,10 @@ public class PreperationPipeline {
 
     private PreperationPipelineContext runTasks(ReadResult data) {
         PreperationPipelineContext context = new PreperationPipelineContext(data);
+//        System.out.println("===== " + data.getFilePath() + " =====");
         for (int i = 0; i < tasks.length; i++) {
             PreparationTask task = tasks[i];
-            System.out.println(i + " - " + task.getDescription());
+//            System.out.println(i + " - " + task.getDescription());
             task.execute(context);
         }
 

@@ -1,8 +1,6 @@
 package DataProcessing;
 
 import Basics.Helpers;
-import DataProcessing.Descriptors.Descriptor;
-import DataProcessing.Descriptors.Global.GlobalDescriptor;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -152,7 +150,7 @@ public class FeatureStatistics {
 
                 float v = context.getElementary(key);
                 if (v < mins.get(key)) mins.put(key, v);
-                if (v < maxs.get(key)) maxs.put(key, v);
+                if (v > maxs.get(key)) maxs.put(key, v);
 
                 ns.put(key, ns.get(key) + 1.0f);
                 float currMean = means.get(key);

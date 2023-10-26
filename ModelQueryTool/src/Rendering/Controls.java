@@ -24,7 +24,7 @@ public class Controls implements KeyListener {
     private int meshIdx;
     private boolean meshChanged;
     private final List<Mesh> meshes;
-    private final List<Float> meshDistances;
+    private final List<String> meshDistances;
     private boolean takeScreenshot;
     private boolean screenshotPressed;
 
@@ -295,7 +295,9 @@ public class Controls implements KeyListener {
     }
 
     String getDistance() {
-        return String.format("%.4f", meshDistances.get(meshIdx));
+        if (meshDistances.size() == 0) return "-";
+        if (meshIdx == 0) return meshDistances.get(meshIdx);
+        return "distance: " + meshDistances.get(meshIdx);
     }
 
     boolean meshChanged() {
@@ -342,7 +344,7 @@ public class Controls implements KeyListener {
 
     void addQueryResult(FileQueryResult result) {
         List<Mesh> resultMeshes = result.getMeshes();
-        List<Float> resultDistances = result.getDistances();
+        List<String> resultDistances = result.getDistances();
         if (resultMeshes.size() != resultDistances.size()) throw new IllegalStateException("Mismatch between distances and meshes.");
         meshes.clear();
         meshDistances.clear();

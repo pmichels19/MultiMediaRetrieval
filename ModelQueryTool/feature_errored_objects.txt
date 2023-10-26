@@ -1,4 +1,3 @@
-Shapes\Labeled_PSB\Bearing\351_clean.off
 Shapes\ShapeDatabase_INFOMR-master\AircraftBuoyant\m1344_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\AircraftBuoyant\m1347_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\AircraftBuoyant\m1351_clean.obj
@@ -393,7 +392,6 @@ Shapes\ShapeDatabase_INFOMR-master\Jet\m1204_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1212_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1221_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1222_clean.obj
-Shapes\ShapeDatabase_INFOMR-master\Jet\m1229_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1230_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1231_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1234_clean.obj
@@ -411,7 +409,6 @@ Shapes\ShapeDatabase_INFOMR-master\Jet\m1257_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1258_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1259_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1260_clean.obj
-Shapes\ShapeDatabase_INFOMR-master\Jet\m1266_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1274_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1284_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Jet\m1299_clean.obj
@@ -471,7 +468,6 @@ Shapes\ShapeDatabase_INFOMR-master\NonWheelChair\m798_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\NonWheelChair\m805_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\NonWheelChair\m819_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\PianoBoard\D00008_clean.obj
-Shapes\ShapeDatabase_INFOMR-master\PianoBoard\D00075_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\PianoBoard\D00104_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\PianoBoard\D00122_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\PianoBoard\D00181_clean.obj
@@ -638,7 +634,6 @@ Shapes\ShapeDatabase_INFOMR-master\Starship\m1374_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Starship\m1378_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Starship\m1379_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Starship\m1381_clean.obj
-Shapes\ShapeDatabase_INFOMR-master\Starship\m1384_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\Starship\m1385_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\SubmachineGun\D00068_clean.obj
 Shapes\ShapeDatabase_INFOMR-master\SubmachineGun\D00119_clean.obj

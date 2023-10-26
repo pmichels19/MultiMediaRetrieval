@@ -6,6 +6,7 @@ import Basics.Stitcher;
 import DataProcessing.Descriptors.Descriptor;
 import DataProcessing.Descriptors.Elementary.*;
 import DataProcessing.Descriptors.Global.*;
+import Preprocessing.PreperationPipeline;
 import Readers.Reader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -39,6 +40,8 @@ public class FeaturePipeline {
             new D2Descriptor(),
             new D3Descriptor(),
             new D4Descriptor(),
+
+            new LightfieldDescriptor(),
     };
 
     private FeaturePipeline() {
@@ -48,11 +51,6 @@ public class FeaturePipeline {
     public static FeaturePipeline getInstance() {
         if (featurePipeline == null) featurePipeline = new FeaturePipeline();
         return featurePipeline;
-    }
-
-    private void clearExistingJson(String jsonFileLocation) {
-        File json = new File(jsonFileLocation);
-        if (json.isFile() && !json.delete()) throw new IllegalStateException("Failed to delete descriptor data file for " + jsonFileLocation);
     }
 
     public void calculateDatabaseDescriptors() {
@@ -65,10 +63,6 @@ public class FeaturePipeline {
             e.printStackTrace();
             return;
         }
-
-        // Clear existing json files
-        Arrays.stream(jsonFiles).forEach(this::clearExistingJson);
-        System.out.println("########## Cleared database json files ##########");
 
         // Calculate the descriptors for all meshes and report any failing ones
         StringBuilder builder = new StringBuilder();
@@ -109,9 +103,18 @@ public class FeaturePipeline {
     }
 
     public FeaturePipelineContext calculateMeshDescriptors(String meshFile) throws IOException {
-        Mesh mesh = stitcher.stitchHoles(Reader.read(meshFile));
+        Mesh mesh = stitcher.stitchHoles(Reader.readToMesh(meshFile));
+        return calculateStitchedMeshDescriptors(mesh);
+    }
+
+    public FeaturePipelineContext calculateMeshDescriptors(Mesh mesh) throws IOException {
+        Mesh stitchedMesh = stitcher.stitchHoles(mesh);
+        return calculateStitchedMeshDescriptors(stitchedMesh);
+    }
+
+    private FeaturePipelineContext calculateStitchedMeshDescriptors(Mesh mesh) {
         FeaturePipelineContext context = new FeaturePipelineContext(mesh);
-        System.out.println("===== " + meshFile + " =====");
+        System.out.println("===== " + mesh.getFilePath() + " =====");
         for (int i = 0; i < descriptors.length; i++) {
             Descriptor descriptor = descriptors[i];
             descriptor.process(context);
@@ -139,7 +142,7 @@ public class FeaturePipeline {
             ObjectMapper mapper = new ObjectMapper();
             try {
                 File json = new File(jsonFiles[i]);
-
+                if (json.isFile() && !json.delete()) throw new IOException("Failed to delete " + jsonFiles[i]);
                 if (!json.createNewFile()) throw new IOException("Failed to create file for " + jsonFiles[i]);
 
                 ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();

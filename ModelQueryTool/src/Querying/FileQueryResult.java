@@ -2,23 +2,27 @@ package Querying;
 
 import Basics.Mesh;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileQueryResult {
     private final List<Mesh> meshes;
 
-    private final List<Float> distances;
+    private final List<String> distances;
 
     FileQueryResult() {
-        this(null, null);
+        this(new ArrayList<>(), new ArrayList<>());
     }
 
     FileQueryResult(List<Mesh> meshes, List<Float> distances) {
         this.meshes = meshes;
-        this.distances = distances;
+        this.distances = distances.stream().map(f -> {
+            if (f != null) return String.format("%.4f", f);
+            return "input file";
+        }).toList();
     }
 
-    public List<Float> getDistances() {
+    public List<String> getDistances() {
         return distances;
     }
 

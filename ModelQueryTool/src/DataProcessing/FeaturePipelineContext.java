@@ -29,7 +29,7 @@ public class FeaturePipelineContext {
     }
 
     public static FeaturePipelineContext fromJson(String filePath) {
-        if (!filePath.endsWith(".json")) throw new IllegalArgumentException("Please provide a .json file.");
+        if (!filePath.endsWith(".json")) return null;
 
         File json = new File(filePath);
         ObjectMapper mapper = new ObjectMapper();
@@ -80,7 +80,7 @@ public class FeaturePipelineContext {
     public void normalizeElementaries(FeatureStatistics statistics) {
         Set<String> keys = new HashSet<>(getElementaryKeys());
         for (String key : keys) {
-            float currValue = elementaryMap.remove(key);
+            float currValue = elementaryMap.get(key);
 
             float min = statistics.getMin(key);
             float max = statistics.getMax(key);
@@ -116,6 +116,10 @@ public class FeaturePipelineContext {
 
     public Set<String> getGlobalKeys() {
         return globalMap.keySet();
+    }
+
+    public void setMesh(Mesh mesh) {
+        this.mesh = mesh;
     }
 
     public Mesh getMesh() {

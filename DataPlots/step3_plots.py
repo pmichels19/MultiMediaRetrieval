@@ -13,8 +13,7 @@ def plot_histogram(ax, histograms):
         ax.plot(ys, histograms[i], '-')
 
 
-def plot_histograms():
-    descriptors = ["a3", "d1", "d2", "d3", "d4"]
+def plot_histograms(descriptors, labels, name, labelpad=10, height=8):
     path_data = {}
     for database in grouped_classes:
         for class_name in grouped_classes[database]:
@@ -46,9 +45,28 @@ def plot_histograms():
                 descriptor = descriptors[j - 1]
                 hists = path_data[key][descriptor]
                 plot_histogram(ax[j][i], hists)
-                ax[j][0].set_ylabel(descriptor, rotation='horizontal', verticalalignment='center_baseline', fontweight='bold', labelpad=10)
+                ax[j][0].set_ylabel(labels[j - 1], rotation='horizontal', verticalalignment='center_baseline', fontweight='bold', labelpad=labelpad)
 
-    plt.savefig("figures\\descriptors.png")
+    plt.savefig(f"figures\\{name}.png")
 
 
-plot_histograms()
+mandatory_descriptors = ["a3", "d1", "d2", "d3", "d4"]
+mandatory_labels = ["a3", "d1", "d2", "d3", "d4"]
+plot_histograms(mandatory_descriptors, mandatory_labels, "descriptors")
+
+lightfield_descriptors = [
+    "lightfield_0.0_0.0_0.0_x",
+    "lightfield_0.2_0.0_0.0_x",
+    "lightfield_0.4_0.0_0.0_x",
+    "lightfield_0.6_0.0_0.0_x",
+    "lightfield_0.8_0.0_0.0_x",
+]
+
+lightfield_labels = [
+    "0.0",
+    "0.2",
+    "0.4",
+    "0.6",
+    "0.8",
+]
+plot_histograms(lightfield_descriptors, lightfield_labels, "lightfields", labelpad=30)

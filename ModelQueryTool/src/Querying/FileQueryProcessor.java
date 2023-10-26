@@ -19,9 +19,9 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class FileQueryProcessor {
-    private static final int K_BEST = 10;
+    private static final int K_BEST = 5;
 
-    private static final int DISTANCE_FUNCTION = 0;
+    private static final int DISTANCE_FUNCTION = 1;
 
     private static final boolean STANDARDIZED = true;
 
@@ -38,13 +38,26 @@ public class FileQueryProcessor {
     public FileQueryResult queryFile(String filePath) {
         FeaturePipelineContext queryContext;
         FeaturePipeline pipeline = FeaturePipeline.getInstance();
+        PreperationPipeline preperationPipeline = PreperationPipeline.getInstance();
 
         FeatureStatistics statistics = new FeatureStatistics();
         statistics.loadJson();
 
+        Mesh cleanMesh;
         try {
-            queryContext = pipeline.calculateMeshDescriptors(filePath);
+            Mesh toProcess = preperationPipeline.getCleanMesh(filePath);
+            queryContext = pipeline.calculateMeshDescriptors(toProcess);
             queryContext.normalizeElementaries(statistics);
+
+            String baseFilePath = filePath.replace("_clean", "");
+            cleanMesh = toProcess;
+            if (new File(baseFilePath).isFile()) {
+                try {
+                    cleanMesh = preperationPipeline.getCleanMesh(baseFilePath);
+                } catch (Exception e) {
+                    System.err.println("Failed to read base file, using existing clean file.");
+                }
+            }
         } catch (Exception e) {
             System.err.println("Failed to process query mesh " + filePath + ":");
             e.printStackTrace();
@@ -54,17 +67,19 @@ public class FileQueryProcessor {
         float[] distances;
         String[] meshFiles;
         FeaturePipelineContext[] contexts;
-        String jsonQueryFile = filePath.substring(0, filePath.lastIndexOf('.')) + ".json";
+
+        String queryWithJsonExtension = filePath.replaceAll("\\.(off|obj|ply)", ".json");
+        String jsonQueryFile = queryWithJsonExtension.replace("/", "\\");
         try (Stream<Path> pathStream = Files.find(Paths.get("Shapes"), 3, this::isJson)) {
             System.out.println("===== Reading database shape statistics =====");
-            String[] paths = pathStream.map(Path::toString).toArray(String[]::new);
+            String[] paths = pathStream.map(Path::toString).filter(path -> !path.equals(jsonQueryFile)).toArray(String[]::new);
 
             meshFiles = Arrays.stream(paths)
                     .map(p -> {
                         String meshFile = p.replace("_clean", "");
                         String offFile = meshFile.replace("json", "off");
                         String objFile = meshFile.replace("json", "obj");
-                        String plyFile = meshFile.replace("json", "oply");
+                        String plyFile = meshFile.replace("json", "ply");
 
                         if (new File(offFile).isFile()) return offFile;
                         if (new File(objFile).isFile()) return objFile;
@@ -75,21 +90,23 @@ public class FileQueryProcessor {
             contexts = Arrays.stream(paths)
                     .map(FeaturePipelineContext::fromJson)
                     .toArray(FeaturePipelineContext[]::new);
-
-            System.out.println("===== Computing distances to database =====");
-            distances = new float[contexts.length];
-            for (int i = 0; i < contexts.length; i++) distances[i] = getDistance(queryContext, contexts[i], statistics);
         } catch (IOException e) {
             System.err.println("Failed to find json files for database:");
             e.printStackTrace();
             return new FileQueryResult();
         }
 
-        System.out.println("===== Preparing " + K_BEST + " matching shapes for rendering =====");
-        PreperationPipeline preperationPipeline = PreperationPipeline.getInstance();
+        System.out.println("===== Computing distances to database =====");
+        distances = new float[contexts.length];
+        for (int i = 0; i < contexts.length; i++) distances[i] = getDistance(queryContext, contexts[i], statistics);
 
+        System.out.println("===== Preparing " + K_BEST + " matching shapes for rendering =====");
         List<Float> bestDists = new ArrayList<>();
         List<Mesh> bestMeshes = new ArrayList<>();
+
+        bestDists.add(null);
+        bestMeshes.add(cleanMesh);
+
         IntStream.range(0, contexts.length).boxed()
                 .sorted(Comparator.comparingDouble(i -> distances[i]))
                 .limit(K_BEST)
@@ -109,16 +126,13 @@ public class FileQueryProcessor {
         List<String> globalKeys = dbContext.getGlobalKeys().stream().toList();
         List<String> elementaryKeys = dbContext.getElementaryKeys().stream().filter(this::processKey).toList();
 
-        int elementaryCount = elementaryKeys.size();
-        float[] dbElementaries = new float[elementaryCount];
-        float[] queryElementaries = new float[elementaryCount];
-        for (int i = 0; i < elementaryCount; i++) {
-            dbElementaries[i] = dbContext.getElementary(elementaryKeys.get(i));
-            queryElementaries[i] = queryContext.getElementary(elementaryKeys.get(i));
+        float distance = 0.0f;
+        for (String key : elementaryKeys) {
+            float diff = queryContext.getElementary(key) - dbContext.getElementary(key);
+            distance += Math.sqrt(diff * diff);
         }
 
         String function = Helpers.DISTANCE_FUNCTIONS[DISTANCE_FUNCTION];
-        float distance = Helpers.getDistance(function, dbElementaries, queryElementaries);
         for (String key : globalKeys) {
             String dfKey = key + function;
             float mean = statistics.getMean(dfKey);
@@ -126,7 +140,7 @@ public class FileQueryProcessor {
             distance += weightedDistance(function, dbContext.getGlobal(key), queryContext.getGlobal(key), mean, stdev);
         }
 
-        float div = ((float) globalKeys.size()) + 1.0f;
+        float div = (float) (elementaryKeys.size() + globalKeys.size());
         return distance / div;
     }
 

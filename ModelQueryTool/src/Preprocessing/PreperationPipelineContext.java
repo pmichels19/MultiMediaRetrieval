@@ -22,7 +22,7 @@ public class PreperationPipelineContext {
     }
 
     public void setVertices(Vec3f[] vertices) {
-        System.out.println("v:" + this.vertices.length + " -> " + vertices.length);
+//        System.out.println("v:" + this.vertices.length + " -> " + vertices.length);
         this.vertices = vertices;
     }
 
@@ -31,7 +31,7 @@ public class PreperationPipelineContext {
     }
 
     public void setFaces(int[][] faces) {
-        System.out.println("f:" + this.faces.length + " -> " + faces.length);
+//        System.out.println("f:" + this.faces.length + " -> " + faces.length);
         this.faces = faces;
     }
 }

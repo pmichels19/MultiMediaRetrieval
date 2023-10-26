@@ -51,7 +51,7 @@ public class Helpers {
             v2l += v2[i] * v2[i];
         }
 
-        return dot / (float) (Math.sqrt(v1l) * Math.sqrt(v2l));
+        return 1.0f - ( dot / (float) (Math.sqrt(v1l) * Math.sqrt(v2l)) );
     }
 
     private static float getEarthMovers(float[] v1, float[] v2) {

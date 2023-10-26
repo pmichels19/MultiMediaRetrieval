@@ -59,12 +59,10 @@ def refineMesh(file_path):
 # for path in paths:
 #     refineMesh(str(path))
 
-# import shutil
-#
-#
 # paths = Path("..\\ModelQueryTool\\Shapes").rglob("**/*_clean.off")
 # for path in paths:
-#     src = str(path)
-#     parts = src.rsplit(".", 1)
-#     dst = parts[0] + "_backup." + parts[1]
-#     shutil.copy(src, dst)
+#     refineMesh(str(path))
+
+# paths = Path("..\\ModelQueryTool\\Shapes").rglob("**/*_clean.ply")
+# for path in paths:
+#     refineMesh(str(path))

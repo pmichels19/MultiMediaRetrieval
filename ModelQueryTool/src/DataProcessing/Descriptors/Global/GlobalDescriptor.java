@@ -7,22 +7,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.jogamp.opengl.math.Vec3f;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 public abstract class GlobalDescriptor implements Descriptor {
-    private static final int BIN_COUNT = 20;
-
-    protected static final int SAMPLE_COUNT = 1000000;
-
     @Override
     public void process(FeaturePipelineContext context) {
-        float[] raw = calculateDescriptor(context);
-        context.putData(getKey(), toHistogram(raw));
+        context.putData(getKey(), calculateDescriptor(context));
     }
 
-    private float[] toHistogram(float[] values) {
+    float[] toHistogram(float[] values) {
         float bmin = Float.MAX_VALUE;
         float bmax = -Float.MAX_VALUE;
         for (float v : values) {

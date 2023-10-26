@@ -15,7 +15,7 @@ public class D1Descriptor extends GlobalDescriptor {
         float[] result = new float[SAMPLE_COUNT];
         for (int i = 0; i < SAMPLE_COUNT; i++) result[i] = vertices[rng.nextInt(max)].length();
 
-        return result;
+        return toHistogram(result);
     }
 
     @Override

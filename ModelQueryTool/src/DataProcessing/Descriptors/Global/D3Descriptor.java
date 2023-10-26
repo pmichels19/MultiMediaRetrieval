@@ -44,7 +44,7 @@ public class D3Descriptor extends GlobalDescriptor {
             }
         }
 
-        return result;
+        return toHistogram(result);
     }
 
     @Override

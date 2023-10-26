@@ -1,4 +1,5 @@
 import Basics.Mesh;
+import Basics.Stitcher;
 import DataProcessing.FeaturePipeline;
 import Preprocessing.Analysis.Analysis;
 import Preprocessing.Analysis.AreaAnalysis;
@@ -6,6 +7,7 @@ import Preprocessing.Analysis.GeneralAnalysis;
 import Preprocessing.PreperationPipeline;
 import Querying.FileQueryProcessor;
 import Querying.FileQueryResult;
+import Readers.ReadResult;
 import Readers.Reader;
 import Rendering.MeshRenderer;
 
@@ -31,7 +33,12 @@ public class Main {
         // Make a query and render the results
         MeshRenderer renderer = MeshRenderer.getInstance();
         FileQueryProcessor processor = FileQueryProcessor.getInstance();
-        renderer.addQueryResults(processor.queryFile("Shapes/ShapeDatabase_INFOMR-master/Jet/m1216_clean.obj"));
+        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Jet\\m1216_clean.obj"); // Jet query
+//        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Quadruped\\D00380_clean.obj"); // Quadruped query
+//        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Biplane\\m1123_clean.obj"); // Biplane query
+//        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Humanoid\\m262_clean.obj"); // Humanoid query
+//        FileQueryResult result = processor.queryFile("Shapes\\Labeled_PSB\\Octopus\\126_clean.off"); // Octopus query
+        renderer.addQueryResults(result);
         renderer.startRenderer();
     }
 

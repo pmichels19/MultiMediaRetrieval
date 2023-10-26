@@ -30,7 +30,7 @@ public class D2Descriptor extends GlobalDescriptor {
             }
         }
 
-        return result;
+        return toHistogram(result);
     }
 
     @Override

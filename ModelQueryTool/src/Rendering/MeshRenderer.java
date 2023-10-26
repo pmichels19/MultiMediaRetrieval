@@ -196,7 +196,7 @@ public class MeshRenderer extends JFrame implements GLEventListener {
         vertices = mesh.getVertexBuffer();
         vertexNormals = mesh.getVertexNormalBuffer();
 
-        this.setTitle("ModelQueryTool Renderer - " + mesh.getName() + " (" + controls.getMeshIdx() + "/" + controls.getMeshCount() + ")\t\tdistance: " + controls.getDistance());
+        this.setTitle("ModelQueryTool Renderer - " + mesh.getName() + " (" + controls.getMeshIdx() + "/" + controls.getMeshCount() + ")\t\t" + controls.getDistance());
     }
 
     private void useShader(GL4 gl4, String type) {

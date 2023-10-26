@@ -24,12 +24,21 @@ public class Stitcher {
     public Mesh stitchHoles(ReadResult readResult) {
         int[][] originalFaces = readResult.getFaces();
 
-        // First we stitch any holes
         List<Edge> singleUseEdges = getSingleUseEdges(originalFaces);
         if (singleUseEdges.isEmpty()) return new Mesh(readResult);
 
         List<int[]> loopFreeBoundaries = extractLoops(singleUseEdges);
-        return fixHoles(readResult, loopFreeBoundaries);
+        return fixHoles(readResult.getVertices(), originalFaces, loopFreeBoundaries, readResult.getFilePath());
+    }
+
+    public Mesh stitchHoles(Mesh mesh) {
+        int[][] originalFaces = mesh.getFaces();
+
+        List<Edge> singleUseEdges = getSingleUseEdges(originalFaces);
+        if (singleUseEdges.isEmpty()) return mesh;
+
+        List<int[]> loopFreeBoundaries = extractLoops(singleUseEdges);
+        return fixHoles(mesh.getVertices(), originalFaces, loopFreeBoundaries, mesh.getFilePath());
     }
 
     private List<Edge> getSingleUseEdges(int[][] faces) {
@@ -71,10 +80,7 @@ public class Stitcher {
         return result;
     }
 
-    private Mesh fixHoles(ReadResult readResult, List<int[]> boundaries) {
-        Vec3f[] originalVertices = readResult.getVertices();
-        int[][] originalFaces = readResult.getFaces();
-
+    private Mesh fixHoles(Vec3f[] originalVertices, int[][] originalFaces, List<int[]> boundaries, String filePath) {
         // We need one new vertex for every hole
         Vec3f[] newVertices = new Vec3f[originalVertices.length + boundaries.size()];
         System.arraycopy(originalVertices, 0, newVertices, 0, originalVertices.length);
@@ -106,7 +112,7 @@ public class Stitcher {
             faceIdx++;
         }
 
-//        System.out.println("Stitched " + boundaries.size() + " holes. Added " + boundaries.size() + " vertices and " + numNewFaces + " faces.");
-        return new Mesh(newVertices, newFaces, readResult.getFilePath());
+        System.out.println("Stitched " + boundaries.size() + " holes. Added " + boundaries.size() + " vertices and " + numNewFaces + " faces.");
+        return new Mesh(newVertices, newFaces, filePath);
     }
 }

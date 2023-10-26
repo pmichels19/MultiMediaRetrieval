@@ -77,7 +77,7 @@ public class Mesh {
     }
 
     public String getName() {
-        return filePath.substring(filePath.lastIndexOf("/") + 1);
+        return filePath.substring(filePath.lastIndexOf("\\") + 1);
     }
 
     public float[] getVertexBuffer() {
