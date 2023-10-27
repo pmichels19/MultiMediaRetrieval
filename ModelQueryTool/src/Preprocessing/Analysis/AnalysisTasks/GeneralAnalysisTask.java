@@ -1,34 +1,25 @@
-package Preprocessing.Analysis;
+package Preprocessing.Analysis.AnalysisTasks;
 
 import Basics.Helpers;
-import Basics.Mesh;
+import Readers.ReadResult;
 import Readers.Reader;
 import com.jogamp.opengl.math.Vec3f;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
-public class GeneralAnalysis extends Analysis {
-    private static GeneralAnalysis generalAnalysis;
-
-    private GeneralAnalysis() {
+public class GeneralAnalysisTask extends AnalysisTask {
+    public GeneralAnalysisTask() {
         this.analysisFileName = "analysis";
     }
 
-    public static GeneralAnalysis getInstance() {
-        if (generalAnalysis == null) {
-            generalAnalysis = new GeneralAnalysis();
-        }
-
-        return generalAnalysis;
-    }
-
-    public void analyse(String filePath) throws IOException {
-        if (ignoreFile(filePath)) return;
-        createCSV(new String[]{"group", "class", "name", "faces", "vertices", "facetype", "xmin", "xmax", "ymin", "ymax", "zmin", "zmax"});
-
+    @Override
+    String analyse(String filePath) throws IOException {
         filePath = filePath.trim();
 
-        String[] splitPath = filePath.split("/");
+        String[] splitPath = filePath.split("[\\\\/]");
         String mName = splitPath[splitPath.length - 1];
         String mClass = splitPath[splitPath.length - 2];
         String mGroup = splitPath[splitPath.length - 3];
@@ -38,19 +29,17 @@ public class GeneralAnalysis extends Analysis {
         else if (filePath.endsWith(".off")) types = checkOffFaces(filePath);
         else if (filePath.endsWith(".ply")) types = checkPlyFaces(filePath);
 
-        Mesh mesh = new Mesh(Reader.read(filePath));
-        analyzeMesh(mesh, mName, mClass, mGroup, types);
-    }
+        ReadResult readResult = Reader.read(filePath);
 
-    private void analyzeMesh(Mesh mesh, String mName, String mClass, String mGroup, String types) throws IOException {
-        File f = new File(getFileName());
-        FileWriter writer = new FileWriter(f, true);
-
-        Vec3f[] vertices = mesh.getVertices();
+        Vec3f[] vertices = readResult.getVertices();
         float[] ext = Helpers.getMinMaxCoordinates(vertices);
 
-        writer.write(mGroup + "," + mClass + "," + mName + "," + mesh.getFaces().length + "," + vertices.length + "," + types + "," + ext[0] + "," + ext[1] + "," + ext[2] + "," + ext[3] + "," + ext[4] + "," + ext[5] + "\n");
-        writer.close();
+        return mGroup + "," + mClass + "," + mName + "," + readResult.getFaces().length + "," + vertices.length + "," + types + "," + ext[0] + "," + ext[1] + "," + ext[2] + "," + ext[3] + "," + ext[4] + "," + ext[5] + "\n";
+    }
+
+    @Override
+    String[] getColumns() {
+        return new String[] {"group", "class", "name", "faces", "vertices", "facetype", "xmin", "xmax", "ymin", "ymax", "zmin", "zmax"};
     }
 
     private String checkObjFaces(String object) {

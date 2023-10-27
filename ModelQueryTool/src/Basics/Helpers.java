@@ -1,6 +1,7 @@
 package Basics;
 
 import com.jogamp.opengl.math.Vec3f;
+import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.Covariance;
 
@@ -86,6 +87,22 @@ public class Helpers {
         }
 
         return new Covariance(vertices2D).getCovarianceMatrix();
+    }
+
+    public static void covarianceToEigenVectors(RealMatrix covariance, Vec3f x, Vec3f y, Vec3f z) {
+        EigenDecomposition decomposition = new EigenDecomposition(covariance);
+        RealMatrix d = decomposition.getV();
+        x.setX((float) d.getEntry(0, 0));
+        x.setY((float) d.getEntry(1, 0));
+        x.setZ((float) d.getEntry(2, 0));
+        x.normalize();
+
+        y.setX((float) d.getEntry(0, 1));
+        y.setY((float) d.getEntry(1, 1));
+        y.setZ((float) d.getEntry(2, 1));
+        y.normalize();
+
+        z.set(new Vec3f().cross(x, y).normalize());
     }
 
     protected static void calculateFaceNormals(Vec3f[] vs, int[][] fs, Vec3f[] ns, float[] as) {

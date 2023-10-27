@@ -13,19 +13,10 @@ public class AlignPCATask implements PreparationTask {
         Vec3f[] vertices = context.getVertices();
         RealMatrix covarianceMatrix = Helpers.getCovarianceMatrix(vertices);
 
-        EigenDecomposition decomposition = new EigenDecomposition(covarianceMatrix);
-        RealMatrix d = decomposition.getV();
-        Vec3f eigx = new Vec3f(
-                (float) d.getEntry(0, 0),
-                (float) d.getEntry(1, 0),
-                (float) d.getEntry(2, 0)
-        ).normalize();
-        Vec3f eigy = new Vec3f(
-                (float) d.getEntry(0, 1),
-                (float) d.getEntry(1, 1),
-                (float) d.getEntry(2, 1)
-        ).normalize();
-        Vec3f eigz = new Vec3f().cross(eigx, eigy).normalize();
+        Vec3f eigx = new Vec3f();
+        Vec3f eigy = new Vec3f();
+        Vec3f eigz = new Vec3f();
+        Helpers.covarianceToEigenVectors(covarianceMatrix,eigx, eigy, eigz);
 
         // Using projection, update the vertex coordinates to align with the eigen vectors
         for (Vec3f vertex : vertices) {

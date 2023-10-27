@@ -1,9 +1,7 @@
 import Basics.Mesh;
 import Basics.Stitcher;
 import DataProcessing.FeaturePipeline;
-import Preprocessing.Analysis.Analysis;
-import Preprocessing.Analysis.AreaAnalysis;
-import Preprocessing.Analysis.GeneralAnalysis;
+import Preprocessing.Analysis.AnalysisPipeline;
 import Preprocessing.PreperationPipeline;
 import Querying.FileQueryProcessor;
 import Querying.FileQueryResult;
@@ -26,56 +24,25 @@ public class Main {
         // Cleaning the shapes in the database. Removes zero area faces and duplicate vertices
 //        cleanDatabase();
         // Generating mesh-based data in csv files (v-count, f-count, AABB coordinates, areas)
-//        analyseMeshes();
+        analyseMeshes();
         // Calculates all features over the entire database and performs standardization and normalization
 //        describeDatabase();
 
         // Make a query and render the results
-        MeshRenderer renderer = MeshRenderer.getInstance();
-        FileQueryProcessor processor = FileQueryProcessor.getInstance();
-        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Jet\\m1216_clean.obj"); // Jet query
+//        MeshRenderer renderer = MeshRenderer.getInstance();
+//        FileQueryProcessor processor = FileQueryProcessor.getInstance();
+//        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Jet\\m1216_clean.obj"); // Jet query
 //        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Quadruped\\D00380_clean.obj"); // Quadruped query
 //        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Biplane\\m1123_clean.obj"); // Biplane query
 //        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Humanoid\\m262_clean.obj"); // Humanoid query
 //        FileQueryResult result = processor.queryFile("Shapes\\Labeled_PSB\\Octopus\\126_clean.off"); // Octopus query
-        renderer.addQueryResults(result);
-        renderer.startRenderer();
+//        renderer.addQueryResults(result);
+//        renderer.startRenderer();
     }
 
     private static void analyseMeshes() {
-        Analysis generalAnalysis = GeneralAnalysis.getInstance();
-        generalAnalysis.setCleanMode(ANALYZE_CLEAN);
-        generalAnalysis.clearCSV();
-
-        Analysis areaAnalysis = AreaAnalysis.getInstance();
-        areaAnalysis.setCleanMode(ANALYZE_CLEAN);
-        areaAnalysis.clearCSV();
-
-        try {
-            for (File db : Objects.requireNonNull(new File("Shapes").listFiles())) {
-                if (db.isDirectory()) processShapeDB(db.getName());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void processShapeDB(String shapeDB) throws IOException {
-        Analysis generalAnalysis = GeneralAnalysis.getInstance();
-        Analysis areaAnalysis = AreaAnalysis.getInstance();
-        File dir = new File("Shapes/" + shapeDB);
-
-        for (File type : Objects.requireNonNull(dir.listFiles())) {
-            if (!type.isDirectory()) continue;
-
-            for (String fileName : Objects.requireNonNull(type.list())) {
-                String path = "Shapes/" + shapeDB + "/" + type.getName() + "/" + fileName;
-                generalAnalysis.analyse(path);
-                areaAnalysis.analyse(path);
-            }
-
-            System.out.println("Processed " + shapeDB + "/" + type.getName());
-        }
+        AnalysisPipeline analysisPipeline = AnalysisPipeline.getInstance();
+        analysisPipeline.run(ANALYZE_CLEAN);
     }
 
     private static void cleanDatabase() {
