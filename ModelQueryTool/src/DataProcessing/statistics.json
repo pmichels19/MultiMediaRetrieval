@@ -36,313 +36,437 @@
     "stdev" : 0.27940726
   },
   "lightfield_0.0_0.0_0.6_y" : {
+    "_cosine" : {
+      "mean" : 0.12833127,
+      "stdev" : 0.108139515
+    },
     "_euclidean" : {
       "mean" : 0.12612496,
       "stdev" : 0.06458951
     },
-    "_cosine" : {
-      "mean" : 0.12833127,
-      "stdev" : 0.108139515
+    "_emd" : {
+      "mean" : 1.5192068,
+      "stdev" : 0.96264505
     }
   },
   "lightfield_0.0_0.0_0.6_x" : {
+    "_cosine" : {
+      "mean" : 0.19792558,
+      "stdev" : 0.17156132
+    },
     "_euclidean" : {
       "mean" : 0.19956788,
       "stdev" : 0.09955859
     },
-    "_cosine" : {
-      "mean" : 0.19792558,
-      "stdev" : 0.17156132
+    "_emd" : {
+      "mean" : 1.9353207,
+      "stdev" : 1.2769771
     }
   },
   "lightfield_0.0_0.0_0.8_y" : {
+    "_cosine" : {
+      "mean" : 0.11698783,
+      "stdev" : 0.10546449
+    },
     "_euclidean" : {
       "mean" : 0.13631332,
       "stdev" : 0.07352479
     },
-    "_cosine" : {
-      "mean" : 0.11698783,
-      "stdev" : 0.10546449
+    "_emd" : {
+      "mean" : 1.3914971,
+      "stdev" : 0.9158544
     }
   },
   "lightfield_0.0_0.0_0.8_x" : {
+    "_cosine" : {
+      "mean" : 0.13816881,
+      "stdev" : 0.13198787
+    },
     "_euclidean" : {
       "mean" : 0.13619454,
       "stdev" : 0.07759549
     },
-    "_cosine" : {
-      "mean" : 0.13816881,
-      "stdev" : 0.13198787
+    "_emd" : {
+      "mean" : 1.7830745,
+      "stdev" : 1.3166686
     }
   },
   "lightfield_0.0_0.0_0.2_y" : {
+    "_cosine" : {
+      "mean" : 0.11606847,
+      "stdev" : 0.111167796
+    },
     "_euclidean" : {
       "mean" : 0.13072905,
       "stdev" : 0.06646948
     },
-    "_cosine" : {
-      "mean" : 0.11606847,
-      "stdev" : 0.111167796
+    "_emd" : {
+      "mean" : 1.3328861,
+      "stdev" : 0.885623
     }
   },
   "lightfield_0.0_0.0_0.2_x" : {
+    "_cosine" : {
+      "mean" : 0.11715721,
+      "stdev" : 0.1113587
+    },
     "_euclidean" : {
       "mean" : 0.12076134,
       "stdev" : 0.0671446
     },
-    "_cosine" : {
-      "mean" : 0.11715721,
-      "stdev" : 0.1113587
+    "_emd" : {
+      "mean" : 1.5220073,
+      "stdev" : 1.0313586
     }
   },
   "lightfield_0.0_0.0_0.4_y" : {
+    "_cosine" : {
+      "mean" : 0.1279545,
+      "stdev" : 0.10841821
+    },
     "_euclidean" : {
       "mean" : 0.12504867,
       "stdev" : 0.06294106
     },
-    "_cosine" : {
-      "mean" : 0.1279545,
-      "stdev" : 0.10841821
+    "_emd" : {
+      "mean" : 1.4799867,
+      "stdev" : 0.9428061
     }
   },
   "lightfield_0.0_0.0_0.4_x" : {
+    "_cosine" : {
+      "mean" : 0.18556173,
+      "stdev" : 0.1595422
+    },
     "_euclidean" : {
       "mean" : 0.19410513,
       "stdev" : 0.0986815
     },
-    "_cosine" : {
-      "mean" : 0.18556173,
-      "stdev" : 0.1595422
+    "_emd" : {
+      "mean" : 1.8106552,
+      "stdev" : 1.1007261
     }
   },
   "lightfield_0.0_0.0_0.0_y" : {
+    "_cosine" : {
+      "mean" : 0.23118465,
+      "stdev" : 0.18055753
+    },
     "_euclidean" : {
       "mean" : 0.2583779,
       "stdev" : 0.14273873
     },
-    "_cosine" : {
-      "mean" : 0.23118465,
-      "stdev" : 0.18055753
+    "_emd" : {
+      "mean" : 1.5362076,
+      "stdev" : 0.9745889
     }
   },
   "lightfield_0.0_0.0_0.0_x" : {
+    "_cosine" : {
+      "mean" : 0.16104612,
+      "stdev" : 0.13656712
+    },
     "_euclidean" : {
       "mean" : 0.13995314,
       "stdev" : 0.07694593
     },
-    "_cosine" : {
-      "mean" : 0.16104612,
-      "stdev" : 0.13656712
+    "_emd" : {
+      "mean" : 1.70551,
+      "stdev" : 1.1008074
     }
   },
   "d1" : {
-    "_euclidean" : {
-      "mean" : 0.20387031,
-      "stdev" : 0.10411616
-    },
     "_cosine" : {
-      "mean" : 0.26175666,
-      "stdev" : 0.18294646
+      "mean" : 0.261755,
+      "stdev" : 0.18294516
+    },
+    "_euclidean" : {
+      "mean" : 0.2038675,
+      "stdev" : 0.10411428
+    },
+    "_emd" : {
+      "mean" : 2.5252202,
+      "stdev" : 1.6392156
     }
   },
   "d2" : {
-    "_euclidean" : {
-      "mean" : 0.1339155,
-      "stdev" : 0.07707607
-    },
     "_cosine" : {
-      "mean" : 0.13216583,
-      "stdev" : 0.13040635
+      "mean" : 0.13210464,
+      "stdev" : 0.1304521
+    },
+    "_euclidean" : {
+      "mean" : 0.13387074,
+      "stdev" : 0.077107735
+    },
+    "_emd" : {
+      "mean" : 1.7093588,
+      "stdev" : 1.1364934
     }
   },
   "d3" : {
-    "_euclidean" : {
-      "mean" : 0.14415294,
-      "stdev" : 0.088481255
-    },
     "_cosine" : {
-      "mean" : 0.14136428,
-      "stdev" : 0.1502062
+      "mean" : 0.1412942,
+      "stdev" : 0.1499146
+    },
+    "_euclidean" : {
+      "mean" : 0.14418015,
+      "stdev" : 0.088487715
+    },
+    "_emd" : {
+      "mean" : 1.8324078,
+      "stdev" : 1.2752372
     }
   },
   "d4" : {
-    "_euclidean" : {
-      "mean" : 0.3102008,
-      "stdev" : 0.1940475
-    },
     "_cosine" : {
-      "mean" : 0.13847935,
-      "stdev" : 0.15093562
+      "mean" : 0.142829,
+      "stdev" : 0.15548824
+    },
+    "_euclidean" : {
+      "mean" : 0.31455848,
+      "stdev" : 0.19671322
+    },
+    "_emd" : {
+      "mean" : 0.54477435,
+      "stdev" : 0.30516693
     }
   },
   "lightfield_0.0_0.8_0.0_y" : {
+    "_cosine" : {
+      "mean" : 0.21975614,
+      "stdev" : 0.17231959
+    },
     "_euclidean" : {
       "mean" : 0.24701446,
       "stdev" : 0.13831799
     },
-    "_cosine" : {
-      "mean" : 0.21975614,
-      "stdev" : 0.17231959
+    "_emd" : {
+      "mean" : 1.5128137,
+      "stdev" : 0.95088017
     }
   },
   "lightfield_0.0_0.8_0.0_x" : {
+    "_cosine" : {
+      "mean" : 0.18434267,
+      "stdev" : 0.14849292
+    },
     "_euclidean" : {
       "mean" : 0.16631496,
       "stdev" : 0.08639397
     },
-    "_cosine" : {
-      "mean" : 0.18434267,
-      "stdev" : 0.14849292
+    "_emd" : {
+      "mean" : 1.8310407,
+      "stdev" : 1.2607267
     }
   },
   "lightfield_0.8_0.0_0.0_x" : {
+    "_cosine" : {
+      "mean" : 0.13857657,
+      "stdev" : 0.11887836
+    },
     "_euclidean" : {
       "mean" : 0.12679431,
       "stdev" : 0.068163864
     },
-    "_cosine" : {
-      "mean" : 0.13857657,
-      "stdev" : 0.11887836
+    "_emd" : {
+      "mean" : 1.5689193,
+      "stdev" : 1.0298765
     }
   },
   "lightfield_0.8_0.0_0.0_y" : {
+    "_cosine" : {
+      "mean" : 0.22274837,
+      "stdev" : 0.17472927
+    },
     "_euclidean" : {
       "mean" : 0.26407975,
       "stdev" : 0.1432857
     },
-    "_cosine" : {
-      "mean" : 0.22274837,
-      "stdev" : 0.17472927
+    "_emd" : {
+      "mean" : 1.5857518,
+      "stdev" : 1.0340096
     }
   },
   "lightfield_0.0_0.6_0.0_x" : {
+    "_cosine" : {
+      "mean" : 0.24051386,
+      "stdev" : 0.19196415
+    },
     "_euclidean" : {
       "mean" : 0.2508795,
       "stdev" : 0.119943306
     },
-    "_cosine" : {
-      "mean" : 0.24051386,
-      "stdev" : 0.19196415
+    "_emd" : {
+      "mean" : 1.873039,
+      "stdev" : 1.3300705
     }
   },
   "lightfield_0.0_0.6_0.0_y" : {
+    "_cosine" : {
+      "mean" : 0.20620507,
+      "stdev" : 0.16127335
+    },
     "_euclidean" : {
       "mean" : 0.23275067,
       "stdev" : 0.13085745
     },
-    "_cosine" : {
-      "mean" : 0.20620507,
-      "stdev" : 0.16127335
+    "_emd" : {
+      "mean" : 1.4778354,
+      "stdev" : 0.91421807
     }
   },
   "lightfield_0.6_0.0_0.0_y" : {
+    "_cosine" : {
+      "mean" : 0.24821758,
+      "stdev" : 0.19575363
+    },
     "_euclidean" : {
       "mean" : 0.32188135,
       "stdev" : 0.16432288
     },
-    "_cosine" : {
-      "mean" : 0.24821758,
-      "stdev" : 0.19575363
+    "_emd" : {
+      "mean" : 1.4564625,
+      "stdev" : 1.0602125
     }
   },
   "lightfield_0.6_0.0_0.0_x" : {
+    "_cosine" : {
+      "mean" : 0.12572959,
+      "stdev" : 0.10851546
+    },
     "_euclidean" : {
       "mean" : 0.118612684,
       "stdev" : 0.06236651
     },
-    "_cosine" : {
-      "mean" : 0.12572959,
-      "stdev" : 0.10851546
+    "_emd" : {
+      "mean" : 1.5072019,
+      "stdev" : 0.9725985
     }
   },
   "lightfield_0.0_0.4_0.0_x" : {
+    "_cosine" : {
+      "mean" : 0.23952791,
+      "stdev" : 0.17621687
+    },
     "_euclidean" : {
       "mean" : 0.25037208,
       "stdev" : 0.11367903
     },
-    "_cosine" : {
-      "mean" : 0.23952791,
-      "stdev" : 0.17621687
+    "_emd" : {
+      "mean" : 1.8397516,
+      "stdev" : 1.1707659
     }
   },
   "lightfield_0.0_0.4_0.0_y" : {
+    "_cosine" : {
+      "mean" : 0.20566963,
+      "stdev" : 0.1611502
+    },
     "_euclidean" : {
       "mean" : 0.23236203,
       "stdev" : 0.13106763
     },
-    "_cosine" : {
-      "mean" : 0.20566963,
-      "stdev" : 0.1611502
+    "_emd" : {
+      "mean" : 1.4792566,
+      "stdev" : 0.91589147
     }
   },
   "lightfield_0.0_0.2_0.0_y" : {
+    "_cosine" : {
+      "mean" : 0.2161495,
+      "stdev" : 0.16978192
+    },
     "_euclidean" : {
       "mean" : 0.2457569,
       "stdev" : 0.13862143
     },
-    "_cosine" : {
-      "mean" : 0.2161495,
-      "stdev" : 0.16978192
+    "_emd" : {
+      "mean" : 1.5006237,
+      "stdev" : 0.93873316
     }
   },
   "lightfield_0.0_0.2_0.0_x" : {
+    "_cosine" : {
+      "mean" : 0.1692095,
+      "stdev" : 0.13391852
+    },
     "_euclidean" : {
       "mean" : 0.15378894,
       "stdev" : 0.0757813
     },
-    "_cosine" : {
-      "mean" : 0.1692095,
-      "stdev" : 0.13391852
+    "_emd" : {
+      "mean" : 1.7199272,
+      "stdev" : 1.0572772
     }
   },
   "a3" : {
-    "_euclidean" : {
-      "mean" : 0.12245618,
-      "stdev" : 0.088891305
-    },
     "_cosine" : {
-      "mean" : 0.08788764,
-      "stdev" : 0.11109735
+      "mean" : 0.087904006,
+      "stdev" : 0.111258715
+    },
+    "_euclidean" : {
+      "mean" : 0.12250595,
+      "stdev" : 0.08920263
+    },
+    "_emd" : {
+      "mean" : 0.7624769,
+      "stdev" : 0.50249696
     }
   },
   "lightfield_0.4_0.0_0.0_y" : {
+    "_cosine" : {
+      "mean" : 0.24549533,
+      "stdev" : 0.1922436
+    },
     "_euclidean" : {
       "mean" : 0.31926468,
       "stdev" : 0.1621722
     },
-    "_cosine" : {
-      "mean" : 0.24549533,
-      "stdev" : 0.1922436
+    "_emd" : {
+      "mean" : 1.453901,
+      "stdev" : 1.0828053
     }
   },
   "lightfield_0.4_0.0_0.0_x" : {
+    "_cosine" : {
+      "mean" : 0.12660702,
+      "stdev" : 0.109427206
+    },
     "_euclidean" : {
       "mean" : 0.11919662,
       "stdev" : 0.06304342
     },
-    "_cosine" : {
-      "mean" : 0.12660702,
-      "stdev" : 0.109427206
+    "_emd" : {
+      "mean" : 1.520172,
+      "stdev" : 0.9842787
     }
   },
   "lightfield_0.2_0.0_0.0_x" : {
+    "_cosine" : {
+      "mean" : 0.13986519,
+      "stdev" : 0.11946945
+    },
     "_euclidean" : {
       "mean" : 0.12747397,
       "stdev" : 0.06836034
     },
-    "_cosine" : {
-      "mean" : 0.13986519,
-      "stdev" : 0.11946945
+    "_emd" : {
+      "mean" : 1.5786338,
+      "stdev" : 1.0322832
     }
   },
   "lightfield_0.2_0.0_0.0_y" : {
+    "_cosine" : {
+      "mean" : 0.22718014,
+      "stdev" : 0.18437546
+    },
     "_euclidean" : {
       "mean" : 0.26451078,
       "stdev" : 0.14561309
     },
-    "_cosine" : {
-      "mean" : 0.22718014,
-      "stdev" : 0.18437546
+    "_emd" : {
+      "mean" : 1.5427643,
+      "stdev" : 1.0674648
     }
   }
 }

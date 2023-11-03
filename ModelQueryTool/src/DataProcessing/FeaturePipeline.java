@@ -1,16 +1,12 @@
 package DataProcessing;
 
-import Basics.Helpers;
 import Basics.Mesh;
-import Basics.Stitcher;
 import DataProcessing.Descriptors.Descriptor;
 import DataProcessing.Descriptors.Elementary.*;
 import DataProcessing.Descriptors.Global.*;
-import Preprocessing.PreperationPipeline;
 import Readers.Reader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.*;
 import java.nio.file.Files;

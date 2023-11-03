@@ -78,6 +78,12 @@ public class PreperationPipeline {
         return new Mesh(result.getVertices(), result.getFaces(), data.getFilePath());
     }
 
+    public Mesh getCleanMesh(Vec3f[] vertices, int[][] faces, String filePath) {
+        ReadResult data = new ReadResult(filePath, faces, vertices);
+        PreperationPipelineContext result = runTasks(data);
+        return new Mesh(result.getVertices(), result.getFaces(), filePath);
+    }
+
     private PreperationPipelineContext runTasks(ReadResult data) {
         PreperationPipelineContext context = new PreperationPipelineContext(data);
 //        System.out.println("===== " + data.getFilePath() + " =====");

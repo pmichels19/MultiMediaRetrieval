@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,8 +95,29 @@ public class FeaturePipelineContext {
         }
     }
 
+    public float[] flattened() {
+        Dotenv dotenv = Dotenv.configure().load();
+        boolean standardized = Boolean.parseBoolean(dotenv.get("STANDARDIZED"));
+        List<String> elementaryKeys = getElementaryKeys().stream().filter(key -> (standardized && key.endsWith("_standardized")) || (!standardized && key.endsWith("_minmax"))).toList();
+
+        List<Float> asList = new ArrayList<>();
+        for (String key : elementaryKeys) asList.add(getElementary(key));
+        getGlobalKeys().forEach(key -> {
+            float[] data = getGlobal(key);
+            for (float d : data) asList.add(d);
+        });
+
+        float[] result = new float[asList.size()];
+        for (int i = 0; i < result.length; i++) result[i] = asList.get(i);
+        return result;
+    }
+
     public void putData(String key, float value) {
         elementaryMap.put(key, value);
+    }
+
+    public void putData(String key, float[] values) {
+        globalMap.put(key, values);
     }
 
     public float getElementary(String key) {
@@ -104,10 +126,6 @@ public class FeaturePipelineContext {
 
     public Set<String> getElementaryKeys() {
         return elementaryMap.keySet();
-    }
-
-    public void putData(String key, float[] values) {
-        globalMap.put(key, values);
     }
 
     public float[] getGlobal(String key) {

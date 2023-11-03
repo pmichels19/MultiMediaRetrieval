@@ -346,9 +346,11 @@ public class Controls implements KeyListener {
         List<Mesh> resultMeshes = result.getMeshes();
         List<String> resultDistances = result.getDistances();
         if (resultMeshes.size() != resultDistances.size()) throw new IllegalStateException("Mismatch between distances and meshes.");
+
         meshes.clear();
         meshDistances.clear();
-        meshes.addAll(result.getMeshes());
-        meshDistances.addAll(result.getDistances());
+
+        meshes.addAll(resultMeshes);
+        meshDistances.addAll(resultDistances);
     }
 }

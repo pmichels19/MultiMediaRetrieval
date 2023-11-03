@@ -1,10 +1,14 @@
 package Basics;
 
+import DataProcessing.Edge;
 import com.jogamp.opengl.math.Vec3f;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class PythonScriptExecutor {
     public static final String CONVEX_HULL = "convex_hull";
@@ -67,7 +71,7 @@ public class PythonScriptExecutor {
     }
 
     private void saveToTempFile(String data, String fileName) throws IOException {
-        File tempFile = new File("../DataPlots/shared/" + fileName);
+        File tempFile = new File("..\\DataPlots\\shared\\" + fileName);
         if (tempFile.isFile() && !tempFile.delete()) {
             throw new IOException("Failed to delete existing temporary file.");
         }
@@ -81,12 +85,15 @@ public class PythonScriptExecutor {
         writer.close();
     }
 
-    private List<String> runScript(String scriptName) {
+    private List<String> runScript(String scriptName, String... args) {
         List<String> error = new ArrayList<>();
         List<String> output = new ArrayList<>();
 
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("py", "../DataPlots/tools/" + scriptName + ".py");
+            Dotenv dotenv = Dotenv.configure().load();
+            String[] script = new String[] { dotenv.get("PYTHON_HANDLE"), "..\\DataPlots\\tools\\" + scriptName + ".py" };
+            String[] callArguments = Stream.concat(Arrays.stream(script), Arrays.stream(args)).toArray(String[]::new);
+            ProcessBuilder processBuilder = new ProcessBuilder(callArguments);
             Process process = processBuilder.start();
 
             BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));

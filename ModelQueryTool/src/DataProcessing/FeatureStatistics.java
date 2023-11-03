@@ -1,6 +1,6 @@
 package DataProcessing;
 
-import Basics.Helpers;
+import Querying.DistanceFunctions.WeightedDistanceFunction;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -51,7 +51,7 @@ public class FeatureStatistics {
         }
 
         for (String key : globalKeys) {
-            for (String df : Helpers.DISTANCE_FUNCTIONS) {
+            for (String df : WeightedDistanceFunction.getDistanceFunctions()) {
                 if (!means.containsKey(key + df)) means.put(key + df, 0.0f);
                 if (!stdevs.containsKey(key + df)) stdevs.put(key + df, 0.0f);
             }
@@ -116,7 +116,7 @@ public class FeatureStatistics {
         for (String key : globalKeys) {
             ObjectNode keyNode = mapper.createObjectNode();
 
-            for (String df : Helpers.DISTANCE_FUNCTIONS) {
+            for (String df : WeightedDistanceFunction.getDistanceFunctions()) {
                 String mkey = key + df;
 
                 ObjectNode dfNode = mapper.createObjectNode();
@@ -185,12 +185,13 @@ public class FeatureStatistics {
                     if (context2 == null) continue;
 
                     ns.put(key, ns.get(key) + 1.0f);
-                    for (String df : Helpers.DISTANCE_FUNCTIONS) {
+                    for (String df : WeightedDistanceFunction.getDistanceFunctions()) {
+                        WeightedDistanceFunction distanceFunction = WeightedDistanceFunction.getDistanceFuncion(df);
                         String mkey = key + df;
 
                         float[] v1 = context1.getGlobal(key);
                         float[] v2 = context2.getGlobal(key);
-                        float distance = Helpers.getDistance(df, v1, v2);
+                        float distance = distanceFunction.descriptorDistance(v1, v2);
 
                         float delta = distance - means.get(mkey);
                         means.put(mkey, means.get(mkey) + (delta / ns.get(key)));
@@ -201,7 +202,7 @@ public class FeatureStatistics {
         }
 
         for (String key : globalKeys) {
-            for (String df : Helpers.DISTANCE_FUNCTIONS) {
+            for (String df : WeightedDistanceFunction.getDistanceFunctions()) {
                 String mkey = key + df;
 
                 float variance = stdevs.get(mkey) / (ns.get(key) - 1.0f);
@@ -217,7 +218,7 @@ public class FeatureStatistics {
         if (node.has("mean")) means.put(key, node.get("mean").floatValue());
         if (node.has("stdev")) stdevs.put(key, node.get("stdev").floatValue());
 
-        for (String df : Helpers.DISTANCE_FUNCTIONS) {
+        for (String df : WeightedDistanceFunction.getDistanceFunctions()) {
             if (node.has(df)) processNode(key + df, node.get(df));
         }
     }

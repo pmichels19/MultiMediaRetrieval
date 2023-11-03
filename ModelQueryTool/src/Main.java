@@ -1,16 +1,15 @@
-import Basics.Mesh;
-import Basics.Stitcher;
+import Analysis.EvaluationPipeline;
 import DataProcessing.FeaturePipeline;
-import Preprocessing.Analysis.AnalysisPipeline;
+import Analysis.AnalysisPipeline;
 import Preprocessing.PreperationPipeline;
 import Querying.FileQueryProcessor;
 import Querying.FileQueryResult;
-import Readers.ReadResult;
-import Readers.Reader;
 import Rendering.MeshRenderer;
+import io.github.cdimascio.dotenv.Dotenv;
 
-import java.io.File;
-import java.io.IOException;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.Objects;
 
 public class Main {
@@ -21,37 +20,69 @@ public class Main {
     private static final boolean PREPARE_CLEANED = true;
 
     public static void main(String[] args) {
-        // Cleaning the shapes in the database. Removes zero area faces and duplicate vertices
-//        cleanDatabase();
-        // Generating mesh-based data in csv files (v-count, f-count, AABB coordinates, areas)
-        analyseMeshes();
-        // Calculates all features over the entire database and performs standardization and normalization
-//        describeDatabase();
-
-        // Make a query and render the results
-//        MeshRenderer renderer = MeshRenderer.getInstance();
-//        FileQueryProcessor processor = FileQueryProcessor.getInstance();
-//        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Jet\\m1216_clean.obj"); // Jet query
-//        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Quadruped\\D00380_clean.obj"); // Quadruped query
-//        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Biplane\\m1123_clean.obj"); // Biplane query
-//        FileQueryResult result = processor.queryFile("Shapes\\ShapeDatabase_INFOMR-master\\Humanoid\\m262_clean.obj"); // Humanoid query
-//        FileQueryResult result = processor.queryFile("Shapes\\Labeled_PSB\\Octopus\\126_clean.off"); // Octopus query
-//        renderer.addQueryResults(result);
-//        renderer.startRenderer();
+        Main main = new Main();
+        // Clean the shapes in the database
+//        main.cleanDatabase();
+        // Write mesh data to csv file
+//        main.analyseMeshes();
+        // Calculates all features
+//        main.describeDatabase();
+        // Calculates all metrics
+        main.evaluateDatabase();
+        // Save database distances for t-SNE
+//        main.tSneDIstances();
+        // Do a query
+//        main.makeQuery();
     }
 
-    private static void analyseMeshes() {
+    private void makeQuery() {
+        // Make a query and render the results
+        MeshRenderer renderer = MeshRenderer.getInstance();
+        FileQueryProcessor processor = FileQueryProcessor.getInstance();
+//        processor.prepareTSNEDistances();
+
+        Dotenv dotenv = Dotenv.configure().load();
+        int k = Integer.parseInt(Objects.requireNonNull(dotenv.get("K_BEST")));
+
+        FileFilter meshFilter = new FileNameExtensionFilter("3D object files", "obj", "off", "ply");
+        JFileChooser fileChooser = new JFileChooser("Shapes");
+        fileChooser.setFileFilter(meshFilter);
+
+        int returnValue = fileChooser.showOpenDialog(null);
+        String chosenFile;
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            chosenFile = fileChooser.getSelectedFile().getPath();
+        } else {
+            return;
+        }
+
+        FileQueryResult result = processor.queryFile(chosenFile, k);
+        renderer.addQueryResults(result);
+        renderer.startRenderer();
+    }
+
+    private void tSneDIstances() {
+        FileQueryProcessor processor = FileQueryProcessor.getInstance();
+        processor.prepareTSNEDistances();
+    }
+
+    private void analyseMeshes() {
         AnalysisPipeline analysisPipeline = AnalysisPipeline.getInstance();
         analysisPipeline.run(ANALYZE_CLEAN);
     }
 
-    private static void cleanDatabase() {
+    private void cleanDatabase() {
         PreperationPipeline preperationPipeline = PreperationPipeline.getInstance();
         preperationPipeline.prepareDatabase(PREPARE_CLEANED);
     }
 
-    private static void describeDatabase() {
+    private void describeDatabase() {
         FeaturePipeline featurePipeline = FeaturePipeline.getInstance();
         featurePipeline.calculateDatabaseDescriptors();
+    }
+
+    private void evaluateDatabase() {
+        EvaluationPipeline evaluationPipeline = EvaluationPipeline.getInstance();
+        evaluationPipeline.run();
     }
 }

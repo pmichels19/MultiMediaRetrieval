@@ -256,7 +256,7 @@ public class MeshRenderer extends JFrame implements GLEventListener {
         FloatBuffer vertexBuffer = FloatBuffer.wrap(items);
         gl4.glBufferData(GL4.GL_ARRAY_BUFFER, (long) items.length * Float.BYTES, vertexBuffer, GL4.GL_STATIC_DRAW);
 
-        int attribLocation = gl4.glGetAttribLocation(program, location);;
+        int attribLocation = gl4.glGetAttribLocation(program, location);
         gl4.glEnableVertexAttribArray(attribLocation);
         gl4.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId);
         gl4.glVertexAttribPointer(attribLocation, 3, GL4.GL_FLOAT, false, 0, 0);
@@ -299,7 +299,7 @@ public class MeshRenderer extends JFrame implements GLEventListener {
         int[] logLength = new int[1];
         gl4.glGetShaderiv(shader, GL4.GL_INFO_LOG_LENGTH, logLength, 0);
         byte[] logBytes = new byte[logLength[0]];
-        gl4.glGetShaderInfoLog(shader, logLength[0], (int[])null, 0, logBytes, 0);
+        gl4.glGetShaderInfoLog(shader, logLength[0], null, 0, logBytes, 0);
         return new String(logBytes);
     }
 

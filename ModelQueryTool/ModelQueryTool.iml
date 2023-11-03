@@ -17,5 +17,7 @@
     <orderEntry type="library" name="jackson-core-2.15.2-sources" level="project" />
     <orderEntry type="library" name="jackson-databind-2.15.2" level="project" />
     <orderEntry type="library" name="gluegen-rt" level="project" />
+    <orderEntry type="library" name="github.jelmerk.hnswlib.core" level="project" />
+    <orderEntry type="library" name="io.github.cdimascio.java.dotenv" level="project" />
   </component>
 </module>

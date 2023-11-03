@@ -6,28 +6,55 @@ import DataProcessing.FeaturePipeline;
 import DataProcessing.FeaturePipelineContext;
 import DataProcessing.FeatureStatistics;
 import Preprocessing.PreperationPipeline;
-import com.jogamp.opengl.math.FloatUtil;
+import Querying.DistanceFunctions.WeightedCosine;
+import Querying.DistanceFunctions.WeightedDistanceFunction;
+import Querying.DistanceFunctions.WeightedEMD;
+import Querying.DistanceFunctions.WeightedEuclidean;
+import Querying.Matchers.BruteForceMatcher;
+import Querying.Matchers.KDTreeMatcher;
+import Querying.Matchers.Matcher;
+import Readers.Reader;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class FileQueryProcessor {
-    private static final int K_BEST = 5;
+    private final boolean STANDARDIZED;
 
-    private static final int DISTANCE_FUNCTION = 1;
+    private final FeatureStatistics statistics;
 
-    private static final boolean STANDARDIZED = true;
+    private final PreperationPipeline preperationPipeline;
+
+    private final FeaturePipeline featurePipeline;
+
+    private final List<FeaturePipelineContext> dbContexts;
 
     private static FileQueryProcessor processor;
 
     private FileQueryProcessor() {
+        Dotenv dotenv = Dotenv.configure().load();
+        STANDARDIZED = Boolean.parseBoolean(dotenv.get("STANDARDIZED"));
+
+        preperationPipeline = PreperationPipeline.getInstance();
+        featurePipeline = FeaturePipeline.getInstance();
+        statistics = new FeatureStatistics();
+        statistics.loadJson();
+
+        System.out.println("===== Reading database shape statistics =====");
+        List<String> paths = Objects.requireNonNull(Helpers.getJsonFiles());
+        dbContexts = paths.stream()
+                .map(FeaturePipelineContext::fromJson)
+                .collect(Collectors.toList());
     }
 
     public static FileQueryProcessor getInstance() {
@@ -35,125 +62,136 @@ public class FileQueryProcessor {
         return processor;
     }
 
-    public FileQueryResult queryFile(String filePath) {
+    public FileQueryResult queryFile(String filePath, int k) {
         FeaturePipelineContext queryContext;
-        FeaturePipeline pipeline = FeaturePipeline.getInstance();
-        PreperationPipeline preperationPipeline = PreperationPipeline.getInstance();
-
-        FeatureStatistics statistics = new FeatureStatistics();
-        statistics.loadJson();
-
-        Mesh cleanMesh;
-        try {
-            Mesh toProcess = preperationPipeline.getCleanMesh(filePath);
-            queryContext = pipeline.calculateMeshDescriptors(toProcess);
-            queryContext.normalizeElementaries(statistics);
-
-            String baseFilePath = filePath.replace("_clean", "");
-            cleanMesh = toProcess;
-            if (new File(baseFilePath).isFile()) {
-                try {
-                    cleanMesh = preperationPipeline.getCleanMesh(baseFilePath);
-                } catch (Exception e) {
-                    System.err.println("Failed to read base file, using existing clean file.");
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Failed to process query mesh " + filePath + ":");
-            e.printStackTrace();
-            return new FileQueryResult();
-        }
-
-        float[] distances;
-        String[] meshFiles;
-        FeaturePipelineContext[] contexts;
 
         String queryWithJsonExtension = filePath.replaceAll("\\.(off|obj|ply)", ".json");
         String jsonQueryFile = queryWithJsonExtension.replace("/", "\\");
-        try (Stream<Path> pathStream = Files.find(Paths.get("Shapes"), 3, this::isJson)) {
-            System.out.println("===== Reading database shape statistics =====");
-            String[] paths = pathStream.map(Path::toString).filter(path -> !path.equals(jsonQueryFile)).toArray(String[]::new);
 
-            meshFiles = Arrays.stream(paths)
-                    .map(p -> {
-                        String meshFile = p.replace("_clean", "");
-                        String offFile = meshFile.replace("json", "off");
-                        String objFile = meshFile.replace("json", "obj");
-                        String plyFile = meshFile.replace("json", "ply");
+        List<String> meshFiles;
+        List<String> paths = Objects.requireNonNull(Helpers.getJsonFiles());
 
-                        if (new File(offFile).isFile()) return offFile;
-                        if (new File(objFile).isFile()) return objFile;
-                        if (new File(plyFile).isFile()) return plyFile;
-                        throw new IllegalStateException("Found json file with no corresponding mesh file.");
-                    }).toArray(String[]::new);
+        int queryIndex = paths.indexOf(jsonQueryFile);
+        if (queryIndex >= 0) {
+            queryContext = dbContexts.remove(queryIndex);
+            System.out.println("Read mesh data from " + jsonQueryFile);
+        } else {
+            try {
+                Mesh toProcess = preperationPipeline.getCleanMesh(filePath);
+                queryContext = featurePipeline.calculateMeshDescriptors(toProcess);
+                queryContext.normalizeElementaries(statistics);
+            } catch (Exception e) {
+                System.err.println("Failed to process query mesh " + filePath + ":");
+                e.printStackTrace();
+                return new FileQueryResult();
+            }
+        }
 
-            contexts = Arrays.stream(paths)
-                    .map(FeaturePipelineContext::fromJson)
-                    .toArray(FeaturePipelineContext[]::new);
+        String inputMesh = filePath;
+        String baseFilePath = filePath.replace("_clean", "");
+        if (new File(baseFilePath).isFile()) inputMesh = baseFilePath;
+
+        paths.remove(queryIndex);
+        meshFiles = paths.stream()
+                .filter(p -> !p.equals(jsonQueryFile))
+                .map(p -> {
+                    String meshFile = p.replace("_clean", "");
+                    String offFile = meshFile.replace("json", "off");
+                    String objFile = meshFile.replace("json", "obj");
+                    String plyFile = meshFile.replace("json", "ply");
+
+                    if (new File(offFile).isFile()) return offFile;
+                    if (new File(objFile).isFile()) return objFile;
+                    if (new File(plyFile).isFile()) return plyFile;
+                    throw new IllegalStateException("Found json file with no corresponding mesh file.");
+                }).toList();
+
+        int elementaryKeys = (int) queryContext.getElementaryKeys().stream().filter(this::processElementary).count();
+        List<String> globalKeys = queryContext.getGlobalKeys().stream().toList();
+        Dotenv dotenv = Dotenv.configure().load();
+
+        WeightedDistanceFunction distanceFunction;
+        String df = Objects.requireNonNull(dotenv.get("DISTANCE_FUNCTION"));
+        switch (df) {
+            case "_cosine" -> distanceFunction = new WeightedCosine(elementaryKeys, globalKeys);
+            case "_euclidean" -> distanceFunction = new WeightedEuclidean(elementaryKeys, globalKeys);
+            case "_emd" -> distanceFunction = new WeightedEMD(elementaryKeys, globalKeys);
+            default -> throw new IllegalStateException("Distance fucntion " + df + " does not exist.");
+        }
+
+        Matcher matcher;
+        String dm = Objects.requireNonNull(dotenv.get("MATCHING_TYPE"));
+        switch (dm) {
+            case "brute_force" -> matcher = new BruteForceMatcher(distanceFunction);
+            case "kd_tree" -> matcher = new KDTreeMatcher(distanceFunction);
+            default -> throw new IllegalStateException("Matcher type " + dm + " does not exist.");
+        }
+
+        System.out.println("Starting query.");
+        long pre = System.currentTimeMillis();
+
+        FileQueryResult result = matcher.getBestMatches(meshFiles, dbContexts, queryContext.flattened(), k);
+        result.addInputFile(inputMesh);
+
+        long post = System.currentTimeMillis();
+        System.out.println("Completed query in " + (post - pre) / 1000.0 + " s." );
+
+        if (queryIndex >= 0) dbContexts.add(queryIndex, queryContext);
+        return result;
+    }
+
+    public void prepareTSNEDistances() {
+        List<FeaturePipelineContext> contexts;
+        try (Stream<Path> pathStream = Files.find(Paths.get("Shapes"), 3, (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().matches(".*_clean\\.json"))) {
+            contexts = pathStream.map(Path::toString).map(FeaturePipelineContext::fromJson).toList();
         } catch (IOException e) {
-            System.err.println("Failed to find json files for database:");
             e.printStackTrace();
-            return new FileQueryResult();
+            return;
         }
 
-        System.out.println("===== Computing distances to database =====");
-        distances = new float[contexts.length];
-        for (int i = 0; i < contexts.length; i++) distances[i] = getDistance(queryContext, contexts[i], statistics);
+        Dotenv dotenv = Dotenv.configure().load();
+        String df = Objects.requireNonNull(dotenv.get("DISTANCE_FUNCTION"));
 
-        System.out.println("===== Preparing " + K_BEST + " matching shapes for rendering =====");
-        List<Float> bestDists = new ArrayList<>();
-        List<Mesh> bestMeshes = new ArrayList<>();
+        int elementaryKeys = (int) contexts.get(0).getElementaryKeys().stream().filter(this::processElementary).count();
+        List<String> globalKeys = contexts.get(0).getGlobalKeys().stream().toList();
 
-        bestDists.add(null);
-        bestMeshes.add(cleanMesh);
-
-        IntStream.range(0, contexts.length).boxed()
-                .sorted(Comparator.comparingDouble(i -> distances[i]))
-                .limit(K_BEST)
-                .forEach(i -> {
-                    try {
-                        System.out.printf("===== %s: %.4f =====\n", meshFiles[i], distances[i]);
-                        bestDists.add(distances[i]);
-                        bestMeshes.add(preperationPipeline.getCleanMesh(meshFiles[i]));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-        return new FileQueryResult(bestMeshes, bestDists);
-    }
-
-    private float getDistance(FeaturePipelineContext queryContext, FeaturePipelineContext dbContext, FeatureStatistics statistics) {
-        List<String> globalKeys = dbContext.getGlobalKeys().stream().toList();
-        List<String> elementaryKeys = dbContext.getElementaryKeys().stream().filter(this::processKey).toList();
-
-        float distance = 0.0f;
-        for (String key : elementaryKeys) {
-            float diff = queryContext.getElementary(key) - dbContext.getElementary(key);
-            distance += Math.sqrt(diff * diff);
+        WeightedDistanceFunction distanceFunction;
+        switch (df) {
+            case "_cosine" -> distanceFunction = new WeightedCosine(elementaryKeys, globalKeys);
+            case "_euclidean" -> distanceFunction = new WeightedEuclidean(elementaryKeys, globalKeys);
+            case "_emd" -> distanceFunction = new WeightedEMD(elementaryKeys, globalKeys);
+            default -> throw new IllegalStateException("Distance fucntion " + df + " does not exist.");
         }
 
-        String function = Helpers.DISTANCE_FUNCTIONS[DISTANCE_FUNCTION];
-        for (String key : globalKeys) {
-            String dfKey = key + function;
-            float mean = statistics.getMean(dfKey);
-            float stdev = statistics.getStdev(dfKey);
-            distance += weightedDistance(function, dbContext.getGlobal(key), queryContext.getGlobal(key), mean, stdev);
+        int n = contexts.size();
+        float[][] result = new float[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                System.out.print(i + ", " + j);
+                float d = distanceFunction.distance(contexts.get(i).flattened(), contexts.get(j).flattened());
+                result[i][j] = d;
+                result[j][i] = d;
+                System.out.print("\r");
+            }
         }
 
-        float div = (float) (elementaryKeys.size() + globalKeys.size());
-        return distance / div;
-    }
-
-    private float weightedDistance(String function, float[] v1, float[] v2, float mean, float stdev) {
-        assert !FloatUtil.isZero(stdev);
-        return (Helpers.getDistance(function, v1, v2) - mean) / stdev;
+        File distanceFile = new File("..\\DataPlots\\shared\\distances.csv");
+        try (FileWriter writer = new FileWriter(distanceFile)) {
+            for (float[] row : result) {
+                String[] rowAsString = IntStream.range(0, row.length).mapToObj(i -> Float.toString(row[i])).toArray(String[]::new);
+                writer.write(String.join(",", rowAsString));
+                writer.write("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean isJson(Path path, BasicFileAttributes attributes) {
         return attributes.isRegularFile() && path.getFileName().toString().matches(".*_clean\\.json");
     }
 
-    private boolean processKey(String key) {
+    boolean processElementary(String key) {
         return (STANDARDIZED && key.endsWith("_standardized")) || (!STANDARDIZED && key.endsWith("_minmax"));
     }
 }
