@@ -6,7 +6,6 @@ import Querying.FileQueryResult;
 import com.github.jelmerk.knn.Item;
 import com.github.jelmerk.knn.SearchResult;
 import com.github.jelmerk.knn.hnsw.HnswIndex;
-import io.github.cdimascio.dotenv.Dotenv;
 
 import java.util.*;
 import java.util.stream.Collectors;

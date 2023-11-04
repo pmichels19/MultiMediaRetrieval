@@ -15,7 +15,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Collection;
@@ -34,6 +33,8 @@ public class MeshRenderer extends JFrame implements GLEventListener {
     private int[] indices;
     private float[] vertices;
     private float[] vertexNormals;
+
+    private FPSAnimator animator;
 
     // KeyListener used to have controls
     private final Controls controls;
@@ -82,7 +83,7 @@ public class MeshRenderer extends JFrame implements GLEventListener {
 
         this.setSize(WIDTH, HEIGHT);
         this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
     }
 
@@ -95,7 +96,7 @@ public class MeshRenderer extends JFrame implements GLEventListener {
         this.setVisible(true);
         rendererCanvas.requestFocusInWindow();
 
-        FPSAnimator animator = new FPSAnimator(rendererCanvas, 60);
+        animator = new FPSAnimator(rendererCanvas, 60);
         animator.start();
     }
 
@@ -133,7 +134,7 @@ public class MeshRenderer extends JFrame implements GLEventListener {
     public void display(GLAutoDrawable glAutoDrawable) {
         GL4 gl4 = glAutoDrawable.getGL().getGL4();
         if (controls.shouldExit()) {
-            this.dispose();
+            animator.stop();
             this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         }
 

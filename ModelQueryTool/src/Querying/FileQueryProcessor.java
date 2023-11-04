@@ -1,5 +1,6 @@
 package Querying;
 
+import Basics.Config;
 import Basics.Helpers;
 import Basics.Mesh;
 import DataProcessing.FeaturePipeline;
@@ -13,8 +14,6 @@ import Querying.DistanceFunctions.WeightedEuclidean;
 import Querying.Matchers.BruteForceMatcher;
 import Querying.Matchers.KDTreeMatcher;
 import Querying.Matchers.Matcher;
-import Readers.Reader;
-import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -42,8 +41,7 @@ public class FileQueryProcessor {
     private static FileQueryProcessor processor;
 
     private FileQueryProcessor() {
-        Dotenv dotenv = Dotenv.configure().load();
-        STANDARDIZED = Boolean.parseBoolean(dotenv.get("STANDARDIZED"));
+        STANDARDIZED = Config.standardized();
 
         preperationPipeline = PreperationPipeline.getInstance();
         featurePipeline = FeaturePipeline.getInstance();
@@ -108,10 +106,9 @@ public class FileQueryProcessor {
 
         int elementaryKeys = (int) queryContext.getElementaryKeys().stream().filter(this::processElementary).count();
         List<String> globalKeys = queryContext.getGlobalKeys().stream().toList();
-        Dotenv dotenv = Dotenv.configure().load();
 
         WeightedDistanceFunction distanceFunction;
-        String df = Objects.requireNonNull(dotenv.get("DISTANCE_FUNCTION"));
+        String df = Config.getDistanceFunction();
         switch (df) {
             case "_cosine" -> distanceFunction = new WeightedCosine(elementaryKeys, globalKeys);
             case "_euclidean" -> distanceFunction = new WeightedEuclidean(elementaryKeys, globalKeys);
@@ -120,7 +117,7 @@ public class FileQueryProcessor {
         }
 
         Matcher matcher;
-        String dm = Objects.requireNonNull(dotenv.get("MATCHING_TYPE"));
+        String dm = Config.getMatchingMethod();
         switch (dm) {
             case "brute_force" -> matcher = new BruteForceMatcher(distanceFunction);
             case "kd_tree" -> matcher = new KDTreeMatcher(distanceFunction);
@@ -149,8 +146,7 @@ public class FileQueryProcessor {
             return;
         }
 
-        Dotenv dotenv = Dotenv.configure().load();
-        String df = Objects.requireNonNull(dotenv.get("DISTANCE_FUNCTION"));
+        String df = Config.getDistanceFunction();
 
         int elementaryKeys = (int) contexts.get(0).getElementaryKeys().stream().filter(this::processElementary).count();
         List<String> globalKeys = contexts.get(0).getGlobalKeys().stream().toList();

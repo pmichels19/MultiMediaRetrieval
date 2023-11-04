@@ -2,7 +2,6 @@ package Basics;
 
 import DataProcessing.Edge;
 import com.jogamp.opengl.math.Vec3f;
-import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -90,8 +89,7 @@ public class PythonScriptExecutor {
         List<String> output = new ArrayList<>();
 
         try {
-            Dotenv dotenv = Dotenv.configure().load();
-            String[] script = new String[] { dotenv.get("PYTHON_HANDLE"), "..\\DataPlots\\tools\\" + scriptName + ".py" };
+            String[] script = new String[] { Config.getPythonHandle(), "..\\DataPlots\\tools\\" + scriptName + ".py" };
             String[] callArguments = Stream.concat(Arrays.stream(script), Arrays.stream(args)).toArray(String[]::new);
             ProcessBuilder processBuilder = new ProcessBuilder(callArguments);
             Process process = processBuilder.start();

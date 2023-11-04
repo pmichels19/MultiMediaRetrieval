@@ -1,9 +1,9 @@
 package Analysis;
 
+import Basics.Config;
 import Basics.Helpers;
 import Querying.FileQueryProcessor;
 import Querying.FileQueryResult;
-import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -45,8 +45,7 @@ public class EvaluationPipelineContext {
     }
 
     public void saveToCsv() {
-        Dotenv dotenv = Dotenv.configure().load();
-        String df = dotenv.get("DISTANCE_FUNCTION");
+        String df = Config.getDistanceFunction();
         String csvFile = "src\\Analysis\\CSV\\evaluation_metrics" + df + ".csv";
         File file = new File(csvFile);
         if (file.isFile() && !file.delete()) throw new IllegalStateException("Failed to delete existing evaluation file.");

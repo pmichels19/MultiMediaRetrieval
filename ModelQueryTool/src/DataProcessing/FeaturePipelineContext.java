@@ -1,11 +1,11 @@
 package DataProcessing;
 
+import Basics.Config;
 import Basics.Mesh;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,8 +96,7 @@ public class FeaturePipelineContext {
     }
 
     public float[] flattened() {
-        Dotenv dotenv = Dotenv.configure().load();
-        boolean standardized = Boolean.parseBoolean(dotenv.get("STANDARDIZED"));
+        boolean standardized = Config.standardized();
         List<String> elementaryKeys = getElementaryKeys().stream().filter(key -> (standardized && key.endsWith("_standardized")) || (!standardized && key.endsWith("_minmax"))).toList();
 
         List<Float> asList = new ArrayList<>();
