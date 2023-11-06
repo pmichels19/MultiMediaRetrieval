@@ -66,8 +66,8 @@ def get_color_map(label_list):
     return colors_map
 
 
-database = "Labeled_PSB"
-# database = "ShapeDatabase_INFOMR-master"
+# database = "Labeled_PSB"
+database = "ShapeDatabase_INFOMR-master"
 files, labels, distances, occurrences = get_DB_data(database)
 c_map = get_color_map(labels)
 

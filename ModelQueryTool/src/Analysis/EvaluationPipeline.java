@@ -1,7 +1,6 @@
 package Analysis;
 
 import Analysis.Evaluation.Evaluator;
-import Analysis.Evaluation.KthTierEvaluator;
 import Analysis.Evaluation.LastRankEvaluator;
 import Analysis.Evaluation.SensitivitySpecificityEvaluator;
 
@@ -17,7 +16,6 @@ import java.util.stream.Stream;
 public class EvaluationPipeline {
     private static final Evaluator[] evaluators = new Evaluator[] {
             new LastRankEvaluator(),
-            new KthTierEvaluator(),
             new SensitivitySpecificityEvaluator(),
     };
 

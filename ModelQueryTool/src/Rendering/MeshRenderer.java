@@ -128,15 +128,12 @@ public class MeshRenderer extends JFrame implements GLEventListener {
 
     @Override
     public void dispose(GLAutoDrawable glAutoDrawable) {
+        animator.stop();
     }
 
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
         GL4 gl4 = glAutoDrawable.getGL().getGL4();
-        if (controls.shouldExit()) {
-            animator.stop();
-            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        }
 
         if (controls.meshChanged()) {
             loadMesh();
@@ -312,7 +309,7 @@ public class MeshRenderer extends JFrame implements GLEventListener {
             BufferedImage screenshot = robot.createScreenCapture(bounds);
 
             String meshName = controls.getMesh().getName();
-            String fileName = "screenshot_" + meshName.substring(0, meshName.lastIndexOf('.'));
+            String fileName = "screenshot_" + meshName;
             ImageIO.write(screenshot, "PNG", new File("figures\\" + fileName + ".png"));
         } catch (AWTException | IOException e) {
             e.printStackTrace();

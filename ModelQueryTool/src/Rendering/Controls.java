@@ -18,7 +18,6 @@ public class Controls implements KeyListener {
     private Vec3f position;
     private Quaternion rotation;
     private int drawingMode;
-    private boolean exit;
     private int shadingMode;
     private boolean shadingModeChanged;
     private int meshIdx;
@@ -43,8 +42,6 @@ public class Controls implements KeyListener {
 
         shadingMode = 0;
         shadingModeChanged = true;
-
-        exit = false;
 
         pressed = new boolean[12];
 
@@ -157,7 +154,6 @@ public class Controls implements KeyListener {
                 shadingMode = (shadingMode + 1) % ShadingMode.values().length;
                 shadingModeChanged = true;
             }
-            case KeyEvent.VK_ESCAPE -> exit = true;
         }
     }
 
@@ -306,10 +302,6 @@ public class Controls implements KeyListener {
 
     boolean shadingModeChanged() {
         return shadingModeChanged;
-    }
-
-    boolean shouldExit() {
-        return exit;
     }
 
     boolean canStart() {

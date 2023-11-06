@@ -3,12 +3,18 @@ package DataProcessing.Descriptors.Global;
 import Basics.Mesh;
 import DataProcessing.Descriptors.Descriptor;
 import DataProcessing.FeaturePipelineContext;
+import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.Vec2i;
 import com.jogamp.opengl.math.Vec3f;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.stream.IntStream;
 
 public class LightfieldDescriptor implements Descriptor {
     private static final float[][] rotations = new float[][] {
@@ -76,10 +82,19 @@ public class LightfieldDescriptor implements Descriptor {
     }
 
     private Vec2i[] getAdjustedVertices(Vec3f[] vertices, float[] rotation) {
+        Matrix4f rotationMatrix = new Matrix4f();
+        rotationMatrix.setToRotationEuler(rotation[0] * (float) Math.PI, rotation[1] * (float) Math.PI, rotation[2] * (float) Math.PI);
+
+        Vec3f[] adjusted = new Vec3f[vertices.length];
+        for (int i = 0; i < vertices.length; i++) {
+            adjusted[i] = new Vec3f();
+            rotationMatrix.mulVec3f(vertices[i], adjusted[i]);
+        }
+
         float maxx, minx, maxy, miny;
         maxx = maxy = -Float.MAX_VALUE;
         minx = miny = Float.MAX_VALUE;
-        for (Vec3f vertex : vertices) {
+        for (Vec3f vertex : adjusted) {
             if (vertex.x() > maxx) maxx = vertex.x();
             if (vertex.x() < minx) minx = vertex.x();
             if (vertex.y() > maxy) maxy = vertex.y();
@@ -92,18 +107,10 @@ public class LightfieldDescriptor implements Descriptor {
         float xAdjust = (scale - xScale) * 0.5f;
         float yAdjust = (scale - yScale) * 0.5f;
 
-        Quaternion quaternion = new Quaternion();
-        quaternion.rotateByAngleX(rotation[0] * (float) Math.PI);
-        quaternion.rotateByAngleY(rotation[1] * (float) Math.PI);
-        quaternion.rotateByAngleZ(rotation[2] * (float) Math.PI);
-
         Vec2i[] scaledVertices = new Vec2i[vertices.length];
         for (int i = 0; i < scaledVertices.length; i++) {
-            Vec3f vertex = new Vec3f();
-            quaternion.rotateVector(vertices[i], vertex);
-
-            int scaledX = (int) (SIZEF * ((vertex.x() - minx) / scale + xAdjust));
-            int scaledY = (int) (SIZEF * ((vertex.y() - miny) / scale + yAdjust));
+            int scaledX = (int) (SIZEF * ((adjusted[i].x() - minx) / scale + xAdjust));
+            int scaledY = (int) (SIZEF * ((adjusted[i].y() - miny) / scale + yAdjust));
             scaledVertices[i] = new Vec2i(scaledX, scaledY);
         }
 

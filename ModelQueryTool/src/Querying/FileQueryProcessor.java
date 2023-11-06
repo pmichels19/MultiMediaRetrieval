@@ -81,7 +81,7 @@ public class FileQueryProcessor {
             } catch (Exception e) {
                 System.err.println("Failed to process query mesh " + filePath + ":");
                 e.printStackTrace();
-                return new FileQueryResult();
+                return null;
             }
         }
 

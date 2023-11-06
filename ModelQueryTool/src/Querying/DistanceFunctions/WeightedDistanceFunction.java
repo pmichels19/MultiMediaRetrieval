@@ -48,27 +48,24 @@ public abstract class WeightedDistanceFunction implements DistanceFunction<float
 
     @Override
     public Float distance(float[] u, float[] v) {
-        float result = 0.0f;
-        int idx = 0;
-        while (idx < elementaryKeys) {
-            float diff = u[idx] - v[idx];
-            result += Math.sqrt(diff * diff);
-            idx++;
-        }
+        int idx = elementaryKeys;
+        float[] subU = Arrays.copyOfRange(u, 0, idx);
+        float[] subV = Arrays.copyOfRange(v, 0, idx);
+        float result = descriptorDistance(subU, subV);
 
         int globalSize = (u.length - idx) / globalKeys.size();
         for (String globalKey : globalKeys) {
             float mean = statistics.getMean(globalKey + getName());
             float stdev = statistics.getStdev(globalKey + getName());
             int endIdx = idx + globalSize;
-            float[] subU = Arrays.copyOfRange(u, idx, endIdx);
-            float[] subV = Arrays.copyOfRange(v, idx, endIdx);
+            subU = Arrays.copyOfRange(u, idx, endIdx);
+            subV = Arrays.copyOfRange(v, idx, endIdx);
 
             result += (descriptorDistance(subU, subV) - mean) / stdev;
             idx = endIdx;
         }
 
-        return result / (elementaryKeys + globalKeys.size());
+        return result / (1 + globalKeys.size());
     }
 
     abstract String getName();

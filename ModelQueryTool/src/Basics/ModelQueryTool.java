@@ -217,8 +217,13 @@ public class ModelQueryTool {
         }
 
         FileQueryResult result = processor.queryFile(chosenFile, k);
+        if (result == null) return;
+
         renderer.addQueryResults(result);
-        renderer.startRenderer();
+        try {
+            renderer.startRenderer();
+        } catch (Exception ignored) {
+        }
     }
 
     private void tSneDIstances() {
