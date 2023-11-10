@@ -15,7 +15,7 @@ def hist_vertices_faces(csv_file):
     def plot_metric(metric):
         metric_name = metric.capitalize()
         fig, ax = plt.subplots(figsize=(6, 4))
-        _, bins, _ = ax.hist(data[metric], bins=50, color='lime', rwidth=0.8, log=True)
+        _, bins, _ = ax.hist(data[metric], bins=50, color='lime', rwidth=0.8)
         ax.set_xlabel(f'Number of {metric_name}')
         ax.set_ylabel('Number of Shapes')
         ax.set_title(f'Distribution of Shapes by Number of {metric_name}')
@@ -24,7 +24,7 @@ def hist_vertices_faces(csv_file):
         fig.autofmt_xdate(rotation=45)
         plt.xticks([round(x / 2000) * 2000 for x in bins[::5]])
         base_name = f"{metric}_distribution"
-        plt.savefig(f'figures/{clean_name(base_name, csv_file)}.png')
+        plt.savefig(f'figures/{clean_name(base_name, csv_file)}_no_log.png')
 
     plot_metric('vertices')
     plot_metric('faces')
@@ -174,15 +174,15 @@ def plot_normalization():
         print(flip_clean_data[col].value_counts(ascending=True).rename_axis('value').reset_index(name='counts'))
 
 
-csv_path = "..\\ModelQueryTool\\src\\Preprocessing\\Analysis\\CSV"
+csv_path = "..\\ModelQueryTool\\src\\Analysis\\CSV"
 ######################
 #   Plotting calls
 ######################
-# hist_vertices_faces(f"{csv_path}\\analysis.csv")
+hist_vertices_faces(f"{csv_path}\\analysis.csv")
 # plot_areas(f"{csv_path}\\area_analysis.csv", np.arange(11) * 5 * 1e-05)
 # print_min_max_avg(f"{csv_path}\\analysis.csv")
 
-# hist_vertices_faces(f"{csv_path}\\analysis_clean.csv")
+hist_vertices_faces(f"{csv_path}\\analysis_clean.csv")
 # class_distribution(f"{csv_path}\\analysis_clean.csv")
 # plot_AABB(f"{csv_path}\\analysis_clean.csv")
 # plot_areas(f"{csv_path}\\area_analysis_clean.csv", np.arange(11) * 0.1 * 1e-05)

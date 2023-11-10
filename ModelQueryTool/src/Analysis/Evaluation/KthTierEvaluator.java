@@ -4,13 +4,13 @@ import Analysis.EvaluationPipelineContext;
 
 import java.util.List;
 
-public class LastRankEvaluator implements Evaluator {
+public class KthTierEvaluator implements Evaluator {
     @Override
     public void evaluateResult(EvaluationPipelineContext context) {
         List<String> matches = context.getMatchedLabels();
         String label = matches.get(0);
-        float lastRank = (matches.lastIndexOf(label) + 1.0f) / (float) context.getClassSize();
+        float k = (matches.lastIndexOf(label) + 1.0f) / (float) context.getClassSize();
 
-        context.addMetric("LR", lastRank);
+        context.addMetric("kth", k);
     }
 }

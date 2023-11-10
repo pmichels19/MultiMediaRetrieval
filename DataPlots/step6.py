@@ -4,15 +4,13 @@ import pandas as pd
 import numpy as np
 
 
-def get_data(distance_function):
-    data = pd.read_csv(f"..\\ModelQueryTool\\src\\Analysis\\CSV\\evaluation_metrics_{distance_function}.csv")
+def get_data(distance_function, lightfields=True):
+    path = f"..\\ModelQueryTool\\src\\Analysis\\CSV\\evaluation_metrics_{distance_function}"
+    if not lightfields:
+        path += "_no_lightfields"
+    data = pd.read_csv(f"{path}.csv")
     data = data.drop('name', axis=1)
     return data
-
-
-euclidean_data = get_data("euclidean")
-cosine_data = get_data("cosine")
-emd_data = get_data("emd")
 
 
 def counts_to_ranks(occurrences):
@@ -54,16 +52,6 @@ def find_best_worst(data, label, k, latex=False):
     print()
 
 
-# Latex output
-find_best_worst(euclidean_data, "Euclidean", 5, True)
-find_best_worst(cosine_data, "Cosine", 5, True)
-find_best_worst(emd_data, "EMD", 5, True)
-# Raw output
-# find_best_worst(euclidean_data, "Euclidean", 5)
-# find_best_worst(cosine_data, "Cosine", 5)
-# find_best_worst(emd_data, "EMD", 5)
-
-
 def sum_rows(totals, row):
     for key in totals:
         totals[key] += row[key] * row['class_size']
@@ -74,10 +62,9 @@ def sum_mean_squares(stdevs, averages, row):
         stdevs[key] += (row[key] - averages[key]) ** 2
 
 
-def function_data(latex=False):
+def function_data(dfs, latex=False):
     dicts = []
     indices = []
-    dfs = [euclidean_data, cosine_data, emd_data]
     labels = ["euclidean", "cosine", "EMD"]
     for i in range(len(dfs)):
         df = dfs[i]
@@ -118,7 +105,22 @@ def function_data(latex=False):
         print(dict_data)
 
 
-# Latex output
-function_data(True)
-# Raw output
-# function_data()
+def find_tables(latex=False, lightfields=False):
+    if lightfields:
+        print("########## WITH LIGHTFIELDS ##########")
+    else:
+        print("########## WITHOUT LIGHTFIELDS ##########")
+    euclidean_data = get_data("euclidean", lightfields)
+    cosine_data = get_data("cosine", lightfields)
+    emd_data = get_data("emd", lightfields)
+
+    find_best_worst(euclidean_data, "Euclidean", 5, latex)
+    find_best_worst(cosine_data, "Cosine", 5, latex)
+    find_best_worst(emd_data, "EMD", 5, latex)
+
+    function_data([euclidean_data, cosine_data, emd_data], latex)
+    print("\n\n\n\n\n\n")
+
+
+find_tables(True)
+find_tables(True, lightfields=True)
