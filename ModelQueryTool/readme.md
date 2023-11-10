@@ -47,4 +47,6 @@ This will be important when running the tool, which asks for a python handle.
 
 ### Running the tool
 With all the libaries installed, the tool should run.
+Note that there is a relatively high memory requirement.
+If you run into issues with the memory limit, make sure to increase it. 
 ___
