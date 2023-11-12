@@ -1,7 +1,6 @@
 # The ModelQueryTool
 A 3D, feature based, shape retrieval system built in Java. Made by Pieter Michels for the master course Multimedia Retrieval (INFOMMR).
 
-___
 ## Installation
 In this section all the steps needed to run the tool are detailed.
 I highly advise running the tool using an IDE.
