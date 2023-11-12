@@ -6,7 +6,6 @@ Besides the python scripts there are three folders:
 3. `tools` contains a set of scripts used by the Java code.
 
 ## Libraries
-___
 To run all the scripts in this project, the following libraries are needed:
 1. matplotlib
 2. pandas
